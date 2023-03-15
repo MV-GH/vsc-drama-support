@@ -9,17 +9,32 @@
   "categories": [
     "Programming Languages"
   ],
+  "publisher": "MV-GH",
+  "icon": "./media/upscaled_drama.jpg",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MV-GH/vsc-drama-support"
+  },
   "contributes": {
-    "languages": [{
-      "id": "drama",
-      "aliases": ["drama", "drama"],
-      "extensions": [".dra"],
-      "configuration": "./language-configuration.json"
-    }],
-    "grammars": [{
-      "language": "drama",
-      "scopeName": "source.dra",
-      "path": "./syntaxes/drama.tmLanguage.json"
-    }]
+    "languages": [
+      {
+        "id": "drama",
+        "aliases": [
+          "DRAMA",
+          "drama"
+        ],
+        "extensions": [
+          ".dra"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "drama",
+        "scopeName": "source.dra",
+        "path": "./syntaxes/drama.tmLanguage.json"
+      }
+    ]
   }
 }
