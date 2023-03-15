@@ -9,12 +9,14 @@
 			"begin": "\\|",
 			"comment": "Line comment",
 			"end": "\\n",
-			"name": "comment.line.drama"
-		},{
+			"name": "comment.line"
+		},
+		{
 			"comment": "label/symbol",
 			"match": "^\\s*\\w+\\s*:",
-			"name": "constant.character.drama"
-		},{
+			"name": "constant.other"
+		},
+		{
 			"comment": "numbers",
 			"match": "-?\\b\\d+\\b",
 			"name": "constant.numeric.drama"
@@ -29,17 +31,48 @@
 					"match": "\\\\."
 				}
 			]
-		},{
-			"name":"constant.language.drama",
+		},
+		{
+			"name": "constant.language.drama",
 			"match": "(?i)\\b(R0|R1|R2|R3|R4|R5|R6|R7|R8|R9)\\b"
 		}
 	],
 	"repository": {
 		"keywords": {
-			"patterns": [{
-				"name": "keyword.control.drama",
-				"match": "(?i)\\b(DRU|NWL|OPT|AFT|DEL|VER|HIA|BIG|VSP|MOD|LEZ|DRS|NWL|SPR|VGL|STP|EINDPR|RESGR)\\b"
-			}]
+			"patterns": [
+				{
+					"comment": "opcodes with modes",
+					"match": "(?i)\\b(OPT|AFT|DEL|VER|HIA|BIG|VSP|MOD|VGL)\\s*\\.?\\s*(i|w|a|d)?\\b",
+					"captures": {
+						"1": {
+							"name": "keyword.control.drama"
+						},
+						"2": {
+							"name": "keyword.operator markup.italic"
+						}
+					}
+				},
+				{
+					"comment": "opcodes without modes",
+					"name": "keyword.control.drama",
+					"match": "(?i)\\b(DRU|NWL|LEZ|DRS|BST|HST|SBR|KTG|SPR|STP)\\b"
+				},
+				{
+					"comment": "lang reserved",
+					"name": "constant.language",
+					"match": "(?i)\\b(EINDPR|RESGR)\\b"
+				},
+				{
+					"comment": "conditions",
+					"match": "(?i)\\b(GEL|NGEL|GR|KLG|KL|GRG)\\b",
+					"name": "constant.language.drama"
+				},
+				{
+					"comment": "conditions which are discouraged to use",
+					"match": "(?i)\\b(NUL|NNUL|POS|NPOS|NEG|NNEG)\\b",
+					"name": "invalid.deprecated"
+				}
+			]
 		}
 	},
 	"scopeName": "source.dra"
