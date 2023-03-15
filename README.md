@@ -8,7 +8,7 @@ At the moment it only does syntax highlighting.
 - syntax highlighting for .dra files
 
 
-![feature X](media/syntax-highlighting-example.gif)
+![syntax highlighting example with multiple themes](media/syntax-highlighting-example.gif)
 
 
 
