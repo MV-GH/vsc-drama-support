@@ -15,6 +15,9 @@
     "type": "git",
     "url": "https://github.com/MV-GH/vsc-drama-support"
   },
+  "scripts": {
+    "antlr4": "antlr4 -Dlanguage=TypeScript -visitor defintions/MyGrammar.g4"
+  },
   "contributes": {
     "languages": [
       {
@@ -36,5 +39,9 @@
         "path": "./syntaxes/drama.tmLanguage.json"
       }
     ]
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "antlr4": "^4.12.0"
   }
 }
