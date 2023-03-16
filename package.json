@@ -15,8 +15,10 @@
     "type": "git",
     "url": "https://github.com/MV-GH/vsc-drama-support"
   },
+  
   "scripts": {
-    "antlr4": "antlr4 -Dlanguage=TypeScript -visitor defintions/MyGrammar.g4"
+    "antlr4": "antlr4 -Dlanguage=TypeScript -visitor definitions/drama.g4 start",
+    "test_antlr4": "antlr4-parse ./definitions/drama.g4 start -gui ./tests/test01.dra"
   },
   "contributes": {
     "languages": [

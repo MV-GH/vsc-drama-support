@@ -2,7 +2,7 @@ grammar drama;
 
 options { caseInsensitive=true; }
 
-program: (LABEL? instr NEWLINE)* EOF;
+start:  (LABEL? instr NEWLINE?)* EOF;
 
 
 
@@ -22,12 +22,12 @@ INSTR_NO_MODE_NO_ARG:
 	| 'STP';
 
 // instructions
-HIA: 'HIA' FULL_MODE? (REGISTER) COLON REGISTER;
+HIA: 'HIA' WS? FULL_MODE? WS REGISTER WS? COLON WS? (REGISTER);
 
 LABEL: W+ ':';
 REGISTER: 'R' D;
-FULL_MODE: DOT [IADW];
-HALF_MODE: DOT [AD];
+FULL_MODE: DOT [IADW] WS;
+HALF_MODE: DOT [AD] WS;
 NEWLINE: [\r?\n]+;
 
 
@@ -35,8 +35,8 @@ INT: [0-9]+;
 
 DOT: '.';
 COLON: ',';
-WS: [ \t\f]+ -> skip;
 
+WS: [ \t\f]+ -> skip;
 // REGEX CLASS RULES
 //TODO
 fragment W: ( 'A' ..'Z' | '0' ..'9' | '_');
