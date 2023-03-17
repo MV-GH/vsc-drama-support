@@ -42,7 +42,7 @@ REGISTER: 'R' D;
 FULL_MODE: DOT WS? [IADW] WS;
 HALF_MODE: DOT WS? [AD] WS;
 LIMITED_MODE: DOT WS? A WS;
-NUMBER: MINUS? INT;
+NUMBER: SIGN? INT;
 CD:
 	NUL
 	| NNUL
@@ -79,8 +79,12 @@ DOT: '.';
 COMMA: ',';
 PIPELINE: '|';
 UNDERSCORE: '_';
+SIGN: PLUS | MINUS;
 MINUS: '-';
+PLUS: '+';
 COLON: ':';
+LEFT_PAREN: '(';
+RIGHT_PAREN: ')';
 
 WS: [ \t\f]+ -> skip;
 OTHER: .+?;

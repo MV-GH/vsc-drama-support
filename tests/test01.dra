@@ -10,6 +10,7 @@ BIG R5, 1000
 BIG R0, a
 a:HIA R5, R1
 BIG R1, R1
+
 main: HIA.a R0, r
 BST R0
 HIA.i R8, R9
@@ -23,3 +24,30 @@ STP
 | P: r: -1(R8)
 | LV: i: R6 
 lees: BST R1 
+HIA R1, -1(R8)
+HIA.w R6, 0
+for: VGL.w R6, 10
+VSP GRG, for_end
+LEZ
+BIG R0, 0(R1+)
+OPT.w R6, 1
+SPR for
+for_end: HST R1
+KTG
+| func schrijfOmgekeerd
+| P: r: -1(R8)
+| LV: i: R6 
+schrijfOmgekeerd: BST R1 
+HIA R1, -1(R8)
+HIA.w R6, 9
+for2: VGL.w R6, 0
+VSP KL, for2_end
+HIA R0, 9(R1-)
+AFT.w R6, 1
+DRU
+NWL
+SPR for2
+for2_end: HST R1
+KTG
+r: RESGR 10
+EINDPR

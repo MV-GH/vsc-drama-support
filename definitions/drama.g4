@@ -14,13 +14,15 @@ instr:
 	| delI
 	| verI
 	| modI
-    | vspI
-    | vglI
+	| vspI
+	| vglI
 	| sprI
-    | sbrI
-    | hstI
-    | bstI
-	| INSTR_NO_MODE_NO_ARG;
+	| sbrI
+	| hstI
+	| bstI
+	| INSTR_NO_MODE_NO_ARG
+	| var
+	| EINDPR;
 
 // instructions instructions with two args and a mode
 hiaI: HIA FULL_MODE? REGISTER COMMA anr;
@@ -40,12 +42,14 @@ bstI: BST REGISTER;
 hstI: HST REGISTER;
 // other
 vspI: VSP CD COMMA adr;
+var: label RESGR NUMBER;
 
 
 anr: (REGISTER | adr);
-adr: (ID | NUMBER);
+adr: (
+		ID
+		| NUMBER
+		| NUMBER LEFT_PAREN ((SIGN REGISTER) | (REGISTER SIGN) | (REGISTER)) RIGHT_PAREN
+	);
 
 label: ID COLON;
-
-// TODO: POSt/PRE increment BS
-// RESERVED KEYWORDS
