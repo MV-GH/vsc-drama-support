@@ -18,7 +18,7 @@
   
   "scripts": {
     "antlr4": "antlr4 -Dlanguage=TypeScript -visitor definitions/drama.g4 start",
-    "test_antlr4": "antlr4-parse ./definitions/drama.g4 start -gui ./tests/test01.dra"
+    "test_antlr4": "antlr4-parse ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -gui ./tests/test01.dra"
   },
   "contributes": {
     "languages": [
