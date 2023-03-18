@@ -17,8 +17,9 @@
   },
   
   "scripts": {
-    "antlr4": "antlr4 -Dlanguage=TypeScript -visitor definitions/drama.g4 start",
-    "test_antlr4": "antlr4-parse ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -gui ./tests/test01.dra"
+    "antlr4-gen": "antlr4 -Dlanguage=TypeScript -o src/antlr definitions/DRAMA_Lexer.g4 && antlr4 -Dlanguage=TypeScript -lib ./src/antlr -o src/antlr definitions/drama.g4 -no-listener -visitor",
+    "test_antlr4": "antlr4-parse ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -gui ./tests/test01.dra",
+    "test_antlr4-tokens": "antlr4-parse ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -tokens ./tests/test01.dra"
   },
   "contributes": {
     "languages": [
