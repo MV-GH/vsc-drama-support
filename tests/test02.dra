@@ -1,0 +1,10 @@
+ HIA.a r0, R9
+HIA r0, R9
+HIA.i r0, R9 |test5
+ HIA.i r0, R9|test3
+  HIA .a r0, R9
+
+  .A 
+  .I
+ HIA . A
+ 

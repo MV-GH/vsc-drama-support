@@ -1,0 +1,15 @@
+HIA : HIA R0, R9
+HIA.a R1, HIA
+_.HIA._HIA: HIA R1, HIA
+sbr.d +5
+a:
+NWL
+HIA.a R0, g
+HIA.a:DRU
+cool: HIA R5, +1(-R5)
+STP
+LEZ
+STP
+g: RESGR
+RESGR -10
+RESGR

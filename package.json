@@ -7,7 +7,7 @@
     "vscode": "^1.76.0"
   },
   "categories": [
-    "Programming Languages"
+    "Programming Languages", "Formatters"
   ],
   "publisher": "MV-GH",
   "icon": "./media/upscaled_drama.jpg",
@@ -15,12 +15,20 @@
     "type": "git",
     "url": "https://github.com/MV-GH/vsc-drama-support"
   },
+  "bugs": "https://github.com/MV-GH/vsc-drama-support/issues",
   
   "scripts": {
-    "antlr4-gen": "antlr4 -Dlanguage=TypeScript -o src/antlr definitions/DRAMA_Lexer.g4 && antlr4 -Dlanguage=TypeScript -lib ./src/antlr -o src/antlr definitions/drama.g4 -no-listener -visitor",
-    "test_antlr4": "antlr4-parse ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -gui ./tests/test01.dra",
-    "test_antlr4-tokens": "antlr4-parse ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -tokens ./tests/test01.dra"
+    "antlr4-gen": "antlr4 -Dlanguage=JavaScript -o src/antlr definitions/DRAMA_Lexer.g4 && antlr4 -Dlanguage=JavaScript -lib ./src/antlr -o src/antlr definitions/drama.g4 -no-listener -visitor",
+    "test_antlr4": "antlr4-parse ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -gui ./tests/test02.dra",
+    "test_antlr4-tokens": "antlr4-parse ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -tokens ./tests/test02.dra",
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
   },
+  "activationEvents": [
+    "onLanguage:dra"
+  ],
+  "main": "./out/extension.js",
   "contributes": {
     "languages": [
       {
@@ -45,6 +53,16 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "antlr4": "^4.12.0"
-  }
+    "antlr4": "^4.12.0",
+    "@types/vscode": "^1.76.0",
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "eslint": "^8.34.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "typescript": "^4.9.5",
+    "@vscode/test-electron": "^2.2.3"
+  },
+  "type": "module"
 }

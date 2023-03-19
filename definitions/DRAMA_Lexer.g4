@@ -5,10 +5,9 @@ options {
 }
 
 COMMENT:
-	PIPELINE (~[\r\n])* (NEWLINE | EOF) -> channel(HIDDEN);
+	PIPELINE (~[\r\n])* -> channel(HIDDEN);
+	// deliberary chosen to not include EOL, comment cant consume EOL as it is needed to match lines
 STR: '"' ~["\r\n]* '"';
-
-INSTR_NO_MODE_NO_ARG: DRU | NWL | LEZ | DRS | KTG | STP;
 
 //KEYWORDS
 
@@ -39,9 +38,10 @@ EINDPR: 'EINDPR';
 RESGR: 'RESGR';
 
 REGISTER: 'R' D;
-FULL_MODE: DOT WS? [IADW] WS;
-HALF_MODE: DOT WS? [AD] WS;
-LIMITED_MODE: DOT WS? A WS;
+MODE: DOT WS? [AWID];
+
+
+
 NUMBER: SIGN? INT;
 CD:
 	NUL
@@ -72,8 +72,8 @@ KLG: 'KLG';
 KL: 'KL';
 GRG: 'GRG';
 
-ID: (A | D) W*;
-NEWLINE: [\r\n]+;
+ID: (A | UNDERSCORE) (W | DOT)*; // cant start with numbers or dots but they can be in the body
+EOL: '\r'? '\n';
 INT: D+;
 DOT: '.';
 COMMA: ',';
@@ -87,7 +87,8 @@ LEFT_PAREN: '(';
 RIGHT_PAREN: ')';
 
 WS: [ \t\f]+ -> skip;
-OTHER: .+?;
+OTHER:
+	.+?; // GARBAGE collecting token, not sure about this approach, to be seen
 
 // REGEX CLASS RULES
 fragment W: (A | D | UNDERSCORE); //Note since caseInsensitivity, a-z is implicitly included

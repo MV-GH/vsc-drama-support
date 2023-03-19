@@ -73,17 +73,35 @@ const parseTree = parser.start();
 class LongestLabelVisitor implements DramaVisitor<number> {
 
     visitStart(ctx: t.StartContext): number {
-        const longestL = ctx.label_list.reduce((a, b) => a.accept() > b.accept() ? a : b)
-        return longestL.accept();
+        const longestL = ctx.label_list().reduce((a, b) => a.accept(this) > b.accept(this) ? a : b)
+        return longestL.accept(this);
     }
     visitLabel(ctx: t.LabelContext): number {
         return ctx.ID().symbol.text.length
     }
+
+    visit(tree: ParseTree): number {
+        throw new Error('not implemented');
+    }
+
+    visitChildren(node: RuleNode): number {
+        throw new Error('not implemented');
+    }
+
+    visitTerminal(node: TerminalNode): number {
+        throw new Error('not implemented');
+    }
+
+    visitErrorNode(node: ErrorNode): number {
+        throw new Error('not implemented');
+    }
 }
 
 
-const visitor = new LongestLabelVisitor();
+export default function test() {
+    const visitor = new LongestLabelVisitor();
 
-const LabelLen = visitor.visitStart(parseTree);
+    const LabelLen = visitor.visitStart(parseTree);
 
-console.log(LabelLen)
+   return LabelLen;
+}

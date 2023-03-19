@@ -20,3 +20,6 @@ Initial release of
 ### 0.0.1
 
 ---
+## Notes self
+linter: rules: resgr, empty lines 
+

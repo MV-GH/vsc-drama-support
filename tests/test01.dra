@@ -1,3 +1,10 @@
+HIA R0, R1  HIA 
+HIA R0, R1
+
+HIA R0, R1  HIA R0, R1
+
+
+
 | test1
 |test 2
 
