@@ -69,3 +69,7 @@ In regards from valid syntax, in my attempt to formalise the spec of DRAMA
 - labels which match keywords or keywords + mode are not valid
 - RESGR , only allows strict positive numbers as arg, and is no longer optional
 
+
+# TODOS
+- UPdate syntax highlighting to add s+1 garbage
+- 

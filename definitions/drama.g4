@@ -1,6 +1,5 @@
 parser grammar drama;
 
-// TODO: write tests for this grammar
 options {
 	tokenVocab = DRAMA_Lexer;
 }
@@ -10,7 +9,7 @@ start: line* label? instr? EOF;
 line:
 	(label? instr? EOL); // each EOL is a line, label only lines are allowed
 
-instr: INSTR_MODE arguments | var | str | EINDPR;
+instr: (INSTR_MODE arguments) | var | str | EINDPR;
 
 // other vspI: VSP CD COMMA adr;
 var: RESGR INT?;

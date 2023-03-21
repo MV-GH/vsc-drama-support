@@ -1,12 +1,12 @@
 import { CharStreams, CommonTokenStream } from 'antlr4';
 import DramaLexer from './antlr/DRAMA_Lexer.js';
-import DramaParser from './antlr/dramaParser.js';
+import DramaParser from './antlr/drama.js';
 import DramaVisitor from './antlr/dramaVisitor.js';
 
 
 const testCode =
-    `| test1
-|test 2
+    `|test8
+|test9
 
 HIA R0, R1
 hiA R0, R5
@@ -71,24 +71,98 @@ const parseTree = parser.start();
 class LongestLabelVisitor extends DramaVisitor {
 
     visitStart(ctx) {
-        const longestL = ctx.label().reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
-        return longestL.accept(this);
+
+        const labels = ctx.line()
+            .map(line => line.label())
+            .filter(line => line != null);
+
+        if (labels.length == 0)
+            return 0;
+
+        const longestLabel = labels.reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
+
+        return longestLabel.accept(this);
     }
     visitLabel(ctx) {
         return ctx.ID().symbol.text.length;
     }
-    visitVar(ctx) {
-       //w ctx.
-    }
 }
 
+class FormatCodeVisitor extends DramaVisitor {
+    constructor(labelLength) {
+        super();
+        this.labelLength = labelLength;
+    }
+
+
+    visitChildren(ctx) {
+        let code = '';
+
+        for (let i = 0; i < ctx.getChildCount(); i++) {
+            code += this.visit(ctx.getChild(i));
+        }
+
+        return code;
+    }
+
+    visitTerminal(ctx) {
+        return ctx.getText();
+    }
+
+    visitLabel(ctx) {
+        return ctx.ID().symbol.text.padStart(this.labelLength) + ": "
+    }
+    visitLine(ctx) {
+        let newLine = "";
+        if (ctx.label()) {
+            newLine += this.visit(ctx.label())
+        } else if (ctx.instr()) {
+            newLine = " ".repeat(this.labelLength + 2) //todo no labels
+        }
+        if (ctx.instr()) {
+            newLine += this.visit(ctx.instr())
+        }
+
+        if (ctx.EOL()) {
+            newLine += ctx.EOL().accept(this)
+        }
+        return newLine
+    }
+
+    visitDouble_arg(ctx) {
+        let line = " "
+
+        for (let i = 0; i < ctx.getChildCount(); i++) {
+
+            if (ctx.getChildCount() - 1 == i) {
+                line += " "
+            }
+            line += this.visit(ctx.getChild(i));
+        }
+        return line
+    }
+
+
+    visitSingle_arg(ctx) {
+        return " " + this.visit(ctx.anr())
+    }
+    visitNo_arg() { return "" }
+}
 
 export default function test() {
     const visitor = new LongestLabelVisitor();
 
-    const LjsabelLen = parseTree.accept(visitor);
+    const labelLen = parseTree.accept(visitor);
 
-    return LabelLen;
+    return labelLen;
 }
 
-console.log(test());
+const t = test();
+
+console.log(t);
+
+
+const visitor = new FormatCodeVisitor(t);
+
+const newCode = parseTree.accept(visitor);
+console.log(newCode);

@@ -72,6 +72,12 @@ export default class dramaVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
+	// Visit a parse tree produced by drama#sign.
+	visitSign(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
 	// Visit a parse tree produced by drama#anr.
 	visitAnr(ctx) {
 	  return this.visitChildren(ctx);
@@ -80,6 +86,12 @@ export default class dramaVisitor extends antlr4.tree.ParseTreeVisitor {
 
 	// Visit a parse tree produced by drama#adr.
 	visitAdr(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by drama#index.
+	visitIndex(ctx) {
 	  return this.visitChildren(ctx);
 	}
 
