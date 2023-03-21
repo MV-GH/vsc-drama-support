@@ -19,9 +19,7 @@
   "bugs": "https://github.com/MV-GH/vsc-drama-support/issues",
   "scripts": {
     "antlr4-gen": "antlr4 -Dlanguage=JavaScript -o src/antlr definitions/DRAMA_Lexer.g4 && antlr4 -Dlanguage=JavaScript -lib ./src/antlr -o src/antlr definitions/drama.g4 -no-listener -visitor",
-    "test_antlr4": "antlr4-parse ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -gui ./tests/test01.dra",
-    "test_antlr4-trace": "antlr4-parse ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -gui ./tests/test01.dra -trace",
-    "test_antlr4-tokens": "antlr4-parse ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -tokens ./tests/test02.dra",
+    "test_antlr4": "antlr4-parse -v 4.12.0 ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -gui ./testfiles/valid/test01.dra",
     "lint": "eslint .",
     "pretest": "npm run lint",
     "test": "node ./test/runTest.js",
