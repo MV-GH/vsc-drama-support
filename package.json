@@ -24,7 +24,8 @@
     "test_antlr4-tokens": "antlr4-parse ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -tokens ./tests/test02.dra",
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "node ./test/runTest.js"
+    "test": "node ./test/runTest.js",
+    "antlr4-tests": "node ./src/test/antlr/grammar_tests.js"
   },
   "activationEvents": [
     "onLanguage:dra"
