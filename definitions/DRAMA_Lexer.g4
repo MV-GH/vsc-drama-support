@@ -4,10 +4,15 @@ options {
 	caseInsensitive = true;
 }
 
-COMMENT:
-	PIPELINE (~[\r\n])* -> channel(HIDDEN);
-	// deliberary chosen to not include EOL, comment cant consume EOL as it is needed to match lines
+// deliberary chosen to not include EOL, comment cant consume EOL as it is needed to match lines
+COMMENT: PIPELINE (~[\r\n])* -> channel(HIDDEN);
+
 STR: '"' ~["\r\n]* '"';
+
+INSTR_MODE: INSTR MODE?;
+MODE: WS? DOT WS? (~[ \t\f\r\n])+; // Verify mode later, TODO: EOF
+
+WS: [ \t\f]+ -> skip;
 
 //KEYWORDS
 
@@ -34,15 +39,34 @@ DRS: 'DRS';
 KTG: 'KTG';
 STP: 'STP';
 
+INSTR:
+	HIA
+	| BIG
+	| OPT
+	| AFT
+	| DEL
+	| VER
+	| MOD
+	| VSP
+	| VGL
+	| BST
+	| HST
+	| SBR
+	| SPR
+	| DRU
+	| NWL
+	| LEZ
+	| DRS
+	| KTG
+	| STP;
+
 EINDPR: 'EINDPR';
 RESGR: 'RESGR';
 
 REGISTER: 'R' D;
-MODE: DOT WS? [AWID];
-
-
 
 NUMBER: SIGN? INT;
+//TODO seperate sign from this
 CD:
 	NUL
 	| NNUL
@@ -72,7 +96,8 @@ KLG: 'KLG';
 KL: 'KL';
 GRG: 'GRG';
 
-ID: (A | UNDERSCORE) (W | DOT)*; // cant start with numbers or dots but they can be in the body
+ID: (A | UNDERSCORE) (W | DOT)*;
+// cant start with numbers or dots but they can be in the body
 EOL: '\r'? '\n';
 INT: D+;
 DOT: '.';
@@ -83,14 +108,14 @@ SIGN: PLUS | MINUS;
 MINUS: '-';
 PLUS: '+';
 COLON: ':';
-LEFT_PAREN: '(';
-RIGHT_PAREN: ')';
+LP: '(';
+RP: ')';
 
-WS: [ \t\f]+ -> skip;
-OTHER:
-	.+?; // GARBAGE collecting token, not sure about this approach, to be seen
+OTHER: .+?;
+// GARBAGE collecting token, not sure about this approach, to be seen
 
 // REGEX CLASS RULES
-fragment W: (A | D | UNDERSCORE); //Note since caseInsensitivity, a-z is implicitly included
+fragment W: (A | D | UNDERSCORE);
+//Note since caseInsensitivity, a-z is implicitly included
 fragment D: [0-9];
 fragment A: [A-Z];
