@@ -5,11 +5,10 @@ options {
 	tokenVocab = DRAMA_Lexer;
 }
 
-start: line* EOF;
+start: line* label? instr? EOF;
 
 line:
-	(label? instr? EOL)
-; // each EOL is a line, label only lines are allowed
+	(label? instr? EOL); // each EOL is a line, label only lines are allowed
 
 instr: INSTR_MODE arguments | var | str | EINDPR;
 
@@ -24,18 +23,21 @@ no_arg:;
 
 reg: REGISTER;
 cd: CD;
-// lbl: ID;
+sign: PLUS | MINUS;
 
 // TODO: redo as SYMBOL + Number is valid too
 anr: (REGISTER | adr);
 adr: (
 		ID
 		| NUMBER
-		| NUMBER LP (
-			(SIGN REGISTER)
-			| (REGISTER SIGN)
-			| (REGISTER)
-		) RP
+		| NUMBER index
+		|  ID sign INT
 	);
+index: LP (
+			(sign REGISTER)
+			| (REGISTER  sign)
+			| (REGISTER)
+		) RP;
+
 
 label: ID COLON;

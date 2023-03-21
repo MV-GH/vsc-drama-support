@@ -1,0 +1,23 @@
+HIA : HIA R0, R9
+HIA.a R1, HIA
+_.HIA._HIA: HIA R1, HIA
+sbr.d +5
+a:
+NWL
+HIA.a R0, g
+HIA.a:DRU
+cool: HIA R5, +1(-R5)
+STP
+LEZ
+STP
+hia.w R0, +1 | valid
+hia R0, +1(R9) | valid
+hia.w R0, 1+s | valid
+|hia.w R0, +1+s | not valid, this is incosistent either no plus prefix is allowed or it should always be
+hiaLw R0, s-1
+STP
+G: RESGR
+
+g: RESGR
+RESGR -10
+RESGR

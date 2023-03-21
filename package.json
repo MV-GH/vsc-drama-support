@@ -7,7 +7,8 @@
     "vscode": "^1.76.0"
   },
   "categories": [
-    "Programming Languages", "Formatters"
+    "Programming Languages",
+    "Formatters"
   ],
   "publisher": "MV-GH",
   "icon": "./media/upscaled_drama.jpg",
@@ -16,7 +17,6 @@
     "url": "https://github.com/MV-GH/vsc-drama-support"
   },
   "bugs": "https://github.com/MV-GH/vsc-drama-support/issues",
-  
   "scripts": {
     "antlr4-gen": "antlr4 -Dlanguage=JavaScript -o src/antlr definitions/DRAMA_Lexer.g4 && antlr4 -Dlanguage=JavaScript -lib ./src/antlr -o src/antlr definitions/drama.g4 -no-listener -visitor",
     "test_antlr4": "antlr4-parse ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -gui ./tests/test01.dra",

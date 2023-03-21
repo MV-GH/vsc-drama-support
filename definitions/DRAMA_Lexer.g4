@@ -65,7 +65,7 @@ RESGR: 'RESGR';
 
 REGISTER: 'R' D;
 
-NUMBER: SIGN? INT;
+NUMBER: MINUS? INT;
 //TODO seperate sign from this
 CD:
 	NUL
@@ -104,7 +104,7 @@ DOT: '.';
 COMMA: ',';
 PIPELINE: '|';
 UNDERSCORE: '_';
-SIGN: PLUS | MINUS;
+
 MINUS: '-';
 PLUS: '+';
 COLON: ':';
