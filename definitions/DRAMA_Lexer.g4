@@ -9,8 +9,8 @@ COMMENT: PIPELINE (~[\r\n])* -> channel(HIDDEN);
 
 STR: '"' ~["\r\n]* '"';
 
-INSTR_MODE: INSTR MODE?;
-MODE: WS? DOT WS? (~[ \t\f\r\n])+; // Verify mode later, TODO: EOF
+INSTR_MODE: INSTR MODE?; // Forced to do this approach as else it would match ID instead
+MODE: WS? DOT WS? (~[ \t\f\r\n])+; // Verify mode later, TODO: EOF, MODE does not actually allow whitespace
 
 WS: [ \t\f]+ -> skip;
 
@@ -65,8 +65,6 @@ RESGR: 'RESGR';
 
 REGISTER: 'R' D;
 
-NUMBER: MINUS? INT;
-//TODO seperate sign from this
 CD:
 	NUL
 	| NNUL

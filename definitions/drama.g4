@@ -13,31 +13,28 @@ line:
 instr: INSTR_MODE arguments | var | str | EINDPR;
 
 // other vspI: VSP CD COMMA adr;
-var: RESGR NUMBER?;
+var: RESGR INT?;
 str: STR;
 
 arguments: double_arg | single_arg | no_arg;
 double_arg: (reg | cd) COMMA anr;
-single_arg: (anr);
+single_arg: anr;
 no_arg:;
 
 reg: REGISTER;
 cd: CD;
 sign: PLUS | MINUS;
 
-// TODO: redo as SYMBOL + Number is valid too
 anr: (REGISTER | adr);
+//ATM DOES NOT SUPPORT -1+s and its derivates 
 adr: (
-		ID
-		| NUMBER
-		| NUMBER index
-		|  ID sign INT
+		ID index?
+		| MINUS? INT index?
+		| ID sign INT
+		| ID sign INT index?
+		| INT sign ID
+		| INT sign ID index?
 	);
-index: LP (
-			(sign REGISTER)
-			| (REGISTER  sign)
-			| (REGISTER)
-		) RP;
-
+index: LP ( (sign REGISTER) | (REGISTER sign) | (REGISTER)) RP;
 
 label: ID COLON;

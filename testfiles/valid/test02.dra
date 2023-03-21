@@ -1,0 +1,9 @@
+hia.i R1, s(R1)
+hia.i R1, 1+s(R1)
+hia.i R1, s+1(R1)
+hia R1, 1(R1)
+hia R1, -1(R1)
+hia r1 , 1
+hia r1 , s
+hia r1, s+1
+hia r1, s-1

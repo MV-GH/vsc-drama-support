@@ -26,7 +26,6 @@ Initial release of
 linter: rules: resgr, empty lines
 ## quirks in DRAMA:
  - Allows RESGR with negative numbers (acts as positive), no arguments (does not reserve any memory space)
- - Allows empty lines to be compiled, errors ofc at runtime, should skip or error at compile time
  - Allows numbers to prefixed with a plus sign, except when a sign is already used
  - doens't check the dot for the mode thus allows you to put any character there (except space)
  - Allows labels to defined as keywords, thus allowing labels to shadow keywords, 
@@ -55,7 +54,7 @@ or
 hia.w R0, +1 | valid
 hia R0, +1(R9) | valid
 hia.w R0, 1+s | valid
-hia.w R0, +1+s | not valid, this is incosistent either no plus prefix is allowed or it should always be
+hia.w R0, +1+s | not valid, this is inconsistent either no plus prefix is allowed or it should always be
 hia.w r0, -1+s | not valid
 HIA.w R0, S-1 | valid
 STP
@@ -65,9 +64,8 @@ S: RESGR
 Thus i have decided to make a few decisions different from the one the DRAMA simulator does.
 In regards from valid syntax, in my attempt to formalise the spec of DRAMA
 
-- First change, is that I only allow the dot as seperator between the mode and instruction (Although not allowing dots in the label or using different seperator would make parsing a lot easier, as it removes some ambiguity)
+- First change, is that I only allow the dot as separator between the mode and instruction (Although not allowing dots in the label or using different separator would make parsing a lot easier, as it removes some ambiguity)
 - I do not allow plus prefixes for numbers
 - labels which match keywords or keywords + mode are not valid
-- I allow empty lines, but the runtime would skip them
 - RESGR , only allows strict positive numbers as arg, and is no longer optional
 
