@@ -13,7 +13,7 @@ readdir(validTests, (err, files) => {
     }
     Promise.all(
         files.map(file => {
-            const prom = exec_promise(`antlr4-parse -v 4.12.0 ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -token ${validTests + file}`);
+            const prom = exec_promise(`antlr4-parse -v 4.12.0 ./grammars/DRAMA_Lexer.g4 ./grammars/drama.g4 start -token ${validTests + file}`);
 
             prom.child.stdout.on("data", stdout => {
                 if (stdout.length != 0) {
@@ -34,7 +34,7 @@ readdir(invalidTests, (err, files) => {
     }
     Promise.all(
         files.map(file => {
-            const prom = exec_promise(`antlr4-parse -v 4.12.0 ./definitions/DRAMA_Lexer.g4 ./definitions/drama.g4 start -token ${invalidTests + file}`);
+            const prom = exec_promise(`antlr4-parse -v 4.12.0 ./grammars/DRAMA_Lexer.g4 ./grammars/drama.g4 start -token ${invalidTests + file}`);
 
             prom.child.stdout.on("data", stdout => {
                 if (stdout.length === 0) {

@@ -4,6 +4,11 @@ options {
 	tokenVocab = DRAMA_Lexer;
 }
 
+@parser::header  {
+//@ts-nocheck
+}
+
+
 start: line* label? instr? EOF;
 
 line:
@@ -12,7 +17,7 @@ line:
 instr: (INSTR_MODE arguments) | var | str | EINDPR;
 
 // other vspI: VSP CD COMMA adr;
-var: RESGR INT?;
+var: RESGR number?;
 str: STR;
 
 arguments: double_arg | single_arg | no_arg;
@@ -37,3 +42,4 @@ adr: (
 index: LP ( (sign REGISTER) | (REGISTER sign) | (REGISTER)) RP;
 
 label: ID COLON;
+number: sign? INT;

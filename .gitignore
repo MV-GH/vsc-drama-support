@@ -3,3 +3,4 @@ node_modules
 .antlr
 out
 .vscode/settings.json
+dist

@@ -4,6 +4,10 @@ options {
 	caseInsensitive = true;
 }
 
+@lexer::header  {
+//@ts-nocheck
+}
+
 // deliberary chosen to not include EOL, comment cant consume EOL as it is needed to match lines
 COMMENT: PIPELINE (~[\r\n])* -> channel(HIDDEN);
 
