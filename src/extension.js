@@ -1,6 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-const vscode = require('vscode');
+import { CharStream, CharStreams } from 'antlr4';
+import * as vscode from 'vscode';
+import { formatInput } from './test';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -14,23 +16,21 @@ function activate(context) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "jstest" is now active!');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('jstest.helloWorld', function () {
-		// The code you place here will be executed every time your command is executed
+	const disposable = vscode.languages.registerDocumentFormattingEditProvider({ "language": 'drama' }, {
+		provideDocumentFormattingEdits(document) {
 
-        const k = test();
-		vscode.window.showInformationMessage(`Hello World from Test5! ${k}`);
+			const output = formatInput(CharStreams.fromString(document.getText()))
+			const range = new vscode.Range(0, 0, document.lineCount, document.lineAt(document.lineCount - 1).text.length);
+			return [vscode.TextEdit.replace(range, output)];
+		}
 	});
+	context.subscriptions.push(disposable)
 
-	context.subscriptions.push(disposable);
 }
-
 // This method is called when your extension is deactivated
-function deactivate() {}
+function deactivate() { }
 
-module.exports = {
+export default {
 	activate,
 	deactivate
 }

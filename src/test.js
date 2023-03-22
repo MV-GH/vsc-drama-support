@@ -1,4 +1,4 @@
-import { CharStreams, CommonTokenStream } from 'antlr4';
+import { CharStream, CharStreams, CommonTokenStream, ParserRuleContext } from 'antlr4';
 import DramaLexer from './antlr/DRAMA_Lexer.js';
 import DramaParser from './antlr/drama.js';
 import DramaVisitor from './antlr/dramaVisitor.js';
@@ -59,14 +59,7 @@ KTG
 r: RESGR 10
 EINDPR
 
-`;
-
-const inputStream = CharStreams.fromString(testCode);
-const lexer = new DramaLexer(inputStream);
-const tokenStream = new CommonTokenStream(lexer);
-const parser = new DramaParser(tokenStream);
-
-const parseTree = parser.start();
+`
 
 class LongestLabelVisitor extends DramaVisitor {
 
@@ -89,9 +82,10 @@ class LongestLabelVisitor extends DramaVisitor {
 }
 
 class FormatCodeVisitor extends DramaVisitor {
-    constructor(labelLength) {
+    constructor(labelLength, tokenStream) {
         super();
         this.labelLength = labelLength;
+        this.tokenStream = tokenStream;
     }
 
 
@@ -106,7 +100,7 @@ class FormatCodeVisitor extends DramaVisitor {
     }
 
     visitTerminal(ctx) {
-        return ctx.getText();
+        return myGetText(ctx, this.tokenStream);
     }
 
     visitLabel(ctx) {
@@ -149,7 +143,7 @@ class FormatCodeVisitor extends DramaVisitor {
     visitNo_arg() { return "" }
 }
 
-export default function test() {
+function test() {
     const visitor = new LongestLabelVisitor();
 
     const labelLen = parseTree.accept(visitor);
@@ -157,12 +151,40 @@ export default function test() {
     return labelLen;
 }
 
-const t = test();
-
-console.log(t);
 
 
-const visitor = new FormatCodeVisitor(t);
 
-const newCode = parseTree.accept(visitor);
-console.log(newCode);
+function myGetText(node, tokenStream) {
+    if (node.getChildCount() == 0) {
+        const t = node.symbol;
+        const tokensBefore = tokenStream.getHiddenTokensToLeft(t.tokenIndex, 1)
+
+        let before = ""
+
+        if (tokensBefore) {
+            for (const token of tokensBefore) {
+                before += token.text
+            }
+        }
+        return before + node.getText()
+    }
+    return node.children.map(node1 => myGetText(node1, tokenStream)).join();
+}
+
+/**
+ * 
+ * @param {CharStream} inputStream 
+ */
+export function formatInput(inputStream) {
+
+    //const inputStream = CharStreams.fromString(testCode);
+    const lexer = new DramaLexer(inputStream);
+    const tokenStream = new CommonTokenStream(lexer);
+    const parser = new DramaParser(tokenStream);
+    const parseTree = parser.start();
+    const labelLen = parseTree.accept(new LongestLabelVisitor());
+    const visitor = new FormatCodeVisitor(labelLen, tokenStream);
+
+    const newCode = parseTree.accept(visitor);
+    return newCode;
+}
