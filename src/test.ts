@@ -1,8 +1,8 @@
-import { CommonTokenStream, ParserRuleContext, RuleNode, TerminalNode, CharStreams, ErrorNode } from 'antlr4';
+import { CommonTokenStream, ParserRuleContext, RuleNode, TerminalNode, CharStreams, ErrorNode, ParseTree } from 'antlr4';
 import DramaLexer from './antlr/DRAMA_Lexer';
-import DramaParser, { InstrContext, LineContext, No_argContext, Single_argContext, VarContext } from './antlr/drama';
+import DramaParser, { InstrContext, LineContext, No_argContext, RegContext, Single_argContext, VarContext } from './antlr/drama';
 import DramaVisitor from './antlr/dramaVisitor';
-import { StartContext, LabelContext, Double_argContext } from './antlr/drama';
+import { StartContext, LabelContext, Double_argContext, CdContext } from './antlr/drama';
 import { CharStream } from 'antlr4';
 
 const FIRST_ARG_SPACES = 7;
@@ -28,19 +28,22 @@ class LongestLabelVisitor extends DramaVisitor<number> {
 class LongestFirstArgVisitor extends DramaVisitor<number> {
     visitStart: (ctx: StartContext) => number = (ctx) => {
 
-        const labels = ctx.line_list()
-            .map(line => line.label())
-            .filter(line => line != null);
+        const fArgs = ctx.line_list()
+            .map(line => line.instr()?.arguments()?.double_arg())
+            .filter(arg => arg !== null && arg !== undefined)
+            .map(x => x.getChild(0) as RegContext | CdContext);
 
-        if (labels.length == 0)
+        if (fArgs.length === 0)
             return 0;
 
-        const longestLabel: LabelContext = labels.reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
+        const longestARg  =fArgs.reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
 
-        return longestLabel.accept(this);
+
+        return (longestARg.accept(this) as unknown as number[])[0];
     }
 
-    visitLabel: (ctx: LabelContext) => number = (ctx) => ctx.ID().symbol.text.length;
+    visitTerminal: (ctx: TerminalNode & ParserRuleContext) => number = ctx => ctx.symbol.text.length;
+
 }
 
 class FormatCodeVisitor extends DramaVisitor<string> {
@@ -48,17 +51,14 @@ class FormatCodeVisitor extends DramaVisitor<string> {
     tokenStream: CommonTokenStream;
     lineCount!: number;
     currentLineIndex = 1;
+    firstArgLength: number;
 
-    constructor(labelLength: number, tokenStream: CommonTokenStream) {
+    constructor(parseTree: StartContext, tokenStream: CommonTokenStream) {
         super();
-        this.labelLength = labelLength;
+        this.lineCount = parseTree.getChildCount();
+        this.labelLength = parseTree.accept(new LongestLabelVisitor());
+        this.firstArgLength = parseTree.accept(new LongestFirstArgVisitor());
         this.tokenStream = tokenStream;
-    }
-
-
-    visitStart: ((ctx: StartContext) => string) = ctx => {
-        this.lineCount = ctx.getChildCount();
-        return this.visitChildren(ctx);
     }
 
     visitChildren: (ctx: ParserRuleContext) => string = (ctx) => {
@@ -113,15 +113,13 @@ class FormatCodeVisitor extends DramaVisitor<string> {
             instrLen = instrC.INSTR_MODE().symbol.text.length
         }
 
-        let line = " ".repeat(FIRST_ARG_SPACES - instrLen)
+        let line = " ".repeat(FIRST_ARG_SPACES - instrLen) // distance between opcode and first arg
 
-        for (let i = 0; i < ctx.getChildCount(); i++) {
+        // should always be like 3: arg1 "," arg2
+        const firstArg = this.visit(ctx.getChild(0)) + ",";
+        line += firstArg.padEnd(this.firstArgLength + 2)
+        line += this.visit(ctx.getChild(2));
 
-            if (ctx.getChildCount() - 1 == i) {
-                line += " "
-            }
-            line += this.visit(ctx.getChild(i));
-        }
         return line
     }
 
@@ -178,8 +176,7 @@ export function formatInput(inputStream: CharStream) {
     const tokenStream = new CommonTokenStream(lexer);
     const parser = new DramaParser(tokenStream);
     const parseTree = parser.start();
-    const labelLen = parseTree.accept(new LongestLabelVisitor());
-    const visitor = new FormatCodeVisitor(labelLen, tokenStream);
+    const visitor = new FormatCodeVisitor(parseTree, tokenStream);
 
     const newCode = parseTree.accept(visitor);
     return newCode;

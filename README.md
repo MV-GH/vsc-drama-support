@@ -72,10 +72,14 @@ In regards from valid syntax, in my attempt to formalise the spec of DRAMA
 
 # TODOS
 - UPdate syntax highlighting to add s+1 garbage
-
+this
+    "[.dra]": {
+        "editor.guides.indentation": false
+    }
 
 formatter todos
 - when no labels
+- comments + space thingy
 
 # CONFIG formatter
 - (un)capitalize labels / dont change
