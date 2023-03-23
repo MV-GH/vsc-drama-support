@@ -4,12 +4,13 @@ options {
 	tokenVocab = DRAMA_Lexer;
 }
 
-@parser::header  {
+@parser::header {
 //@ts-nocheck
 }
 
-
-start: line* label? instr? EOF;
+// We are assuming that the last instruction ends in EOL (we enforce that by manually adding EOL if
+// needed) significantly reduces complexity
+start: line* EOF;
 
 line:
 	(label? instr? EOL); // each EOL is a line, label only lines are allowed

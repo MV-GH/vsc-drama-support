@@ -72,4 +72,12 @@ In regards from valid syntax, in my attempt to formalise the spec of DRAMA
 
 # TODOS
 - UPdate syntax highlighting to add s+1 garbage
-- 
+
+
+formatter todos
+- when no labels
+
+# CONFIG formatter
+- (un)capitalize labels / dont change
+- multiple layer labels
+- space between arg and instruct

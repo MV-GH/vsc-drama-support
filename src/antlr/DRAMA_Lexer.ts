@@ -1,4 +1,3 @@
-
 //@ts-nocheck
 // Generated from grammars/DRAMA_Lexer.g4 by ANTLR 4.12.0
 // noinspection ES6UnusedImports,JSUnusedGlobalSymbols,JSUnusedLocalSymbols
@@ -13,6 +12,9 @@ import {
 	PredictionContextCache,
 	Token
 } from "antlr4";
+
+
+
 export default class DRAMA_Lexer extends Lexer {
 	public static readonly COMMENT = 1;
 	public static readonly STR = 2;

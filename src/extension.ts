@@ -12,7 +12,6 @@ export function activate(context: vscode.ExtensionContext) {
 	let orange = vscode.window.createOutputChannel("Orange");
 	orange.show()
 	//Write to output.
-	orange.appendLine("I am a banana.");
 	vscode.window.showInformationMessage(
 		"Active you are"
 	);
@@ -23,10 +22,17 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.window.showInformationMessage(
 				"format you shall"
 			);
-			orange.append(document.getText())
-			const output = formatInput(CharStreams.fromString(document.getText()))
-			const range = new vscode.Range(0, 0, document.lineCount, document.lineAt(document.lineCount - 1).text.length);
-			return [vscode.TextEdit.replace(range, output)];
+			try {
+				const output = formatInput(CharStreams.fromString(document.getText() + "\n"))
+				const range = new vscode.Range(0, 0, document.lineCount, document.lineAt(document.lineCount - 1).text.length);
+				return [vscode.TextEdit.replace(range, output)];
+			} catch (error) {
+				console.error(error)
+				orange.append((error as Error).message)
+			}
+
+
+
 		}
 	});
 	context.subscriptions.push(disposable)

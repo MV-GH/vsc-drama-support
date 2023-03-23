@@ -1,12 +1,31 @@
 import { CommonTokenStream, ParserRuleContext, RuleNode, TerminalNode, CharStreams, ErrorNode } from 'antlr4';
 import DramaLexer from './antlr/DRAMA_Lexer';
-import DramaParser, { LineContext, No_argContext, Single_argContext, VarContext } from './antlr/drama';
+import DramaParser, { InstrContext, LineContext, No_argContext, Single_argContext, VarContext } from './antlr/drama';
 import DramaVisitor from './antlr/dramaVisitor';
 import { StartContext, LabelContext, Double_argContext } from './antlr/drama';
 import { CharStream } from 'antlr4';
 
+const FIRST_ARG_SPACES = 7;
 
 class LongestLabelVisitor extends DramaVisitor<number> {
+    visitStart: (ctx: StartContext) => number = (ctx) => {
+
+        const labels = ctx.line_list()
+            .map(line => line.label())
+            .filter(line => line != null);
+
+        if (labels.length == 0)
+            return 0;
+
+        const longestLabel: LabelContext = labels.reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
+
+        return longestLabel.accept(this);
+    }
+
+    visitLabel: (ctx: LabelContext) => number = (ctx) => ctx.ID().symbol.text.length;
+}
+
+class LongestFirstArgVisitor extends DramaVisitor<number> {
     visitStart: (ctx: StartContext) => number = (ctx) => {
 
         const labels = ctx.line_list()
@@ -27,6 +46,8 @@ class LongestLabelVisitor extends DramaVisitor<number> {
 class FormatCodeVisitor extends DramaVisitor<string> {
     labelLength: number;
     tokenStream: CommonTokenStream;
+    lineCount!: number;
+    currentLineIndex = 1;
 
     constructor(labelLength: number, tokenStream: CommonTokenStream) {
         super();
@@ -34,6 +55,11 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         this.tokenStream = tokenStream;
     }
 
+
+    visitStart: ((ctx: StartContext) => string) = ctx => {
+        this.lineCount = ctx.getChildCount();
+        return this.visitChildren(ctx);
+    }
 
     visitChildren: (ctx: ParserRuleContext) => string = (ctx) => {
         let code = '';
@@ -49,7 +75,10 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         if (ctx.symbol.type === DramaParser.EOF) {
             return "";
         }
-        return myGetText(ctx, this.tokenStream)
+        else if (ctx.symbol.type === DramaParser.EOL) {
+            this.currentLineIndex++;
+        }
+        return myGetText(ctx, this.tokenStream, this.currentLineIndex === this.lineCount)
     }
 
     visitErrorNode(node: ErrorNode): string {
@@ -66,18 +95,25 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         } else if (ctx.instr()) {
             newLine = " ".repeat(this.labelLength + 2) //todo no labels
         }
+
         if (ctx.instr()) {
             newLine += this.visit(ctx.instr())
         }
 
-        if (ctx.EOL()) {
-            newLine += this.visit(ctx.EOL())
-        }
+        newLine += this.visit(ctx.EOL())
+
         return newLine
     }
 
     visitDouble_arg: (ctx: Double_argContext) => string = ctx => {
-        let line = " "
+        let instrLen = 0;
+        const instrC = ctx.parentCtx?.parentCtx as InstrContext;
+
+        if (instrC !== undefined) {
+            instrLen = instrC.INSTR_MODE().symbol.text.length
+        }
+
+        let line = " ".repeat(FIRST_ARG_SPACES - instrLen)
 
         for (let i = 0; i < ctx.getChildCount(); i++) {
 
@@ -89,16 +125,36 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         return line
     }
 
-    visitSingle_arg: (ctx: Single_argContext) => string = (ctx) => " " + this.visit(ctx.anr())
+    visitSingle_arg: (ctx: Single_argContext) => string = (ctx) => {
+        let instrLen = 0;
+        const instrC = ctx.parentCtx?.parentCtx as InstrContext;
+
+        if (instrC !== undefined) {
+            instrLen = instrC.INSTR_MODE().symbol.text.length
+        }
+
+        let line = " ".repeat(FIRST_ARG_SPACES - instrLen)
+
+
+        return line + this.visit(ctx.anr())
+    }
     visitNo_arg: (ctx: No_argContext) => string = () => ""
     visitVar: ((ctx: VarContext) => string) = ctx => {
-        return this.visit(ctx.RESGR()) + " " + this.visit(ctx.number_())
+        let post: string
+
+        if (ctx.number_()) {
+            post = " " + this.visit(ctx.number_())
+        } else {
+            post = ""
+        }
+
+        return this.visit(ctx.RESGR()) + post;
     }
 
 }
 
 
-function myGetText(node: TerminalNode & ParserRuleContext, tokenStream: CommonTokenStream): string {
+function myGetText(node: TerminalNode & ParserRuleContext, tokenStream: CommonTokenStream, last: boolean = false): string {
     if (node.getChildCount() == 0) {
         const t = node.symbol;
         // @ts-ignore: ANTLR4 FIX YOUR TS TARGET
@@ -111,14 +167,13 @@ function myGetText(node: TerminalNode & ParserRuleContext, tokenStream: CommonTo
                 before += token.text
             }
         }
-        return before + node.getText()
+        return last ? before : before + node.getText()
     }
-    return node.children?.map((node1: any) => myGetText(node1, tokenStream)).join() ?? "";
+    return node.children?.map((node1: any) => myGetText(node1, tokenStream, last)).join() ?? "";
 }
 
 export function formatInput(inputStream: CharStream) {
 
-    //const inputStream = CharStreams.fromString(testCode);
     const lexer = new DramaLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
     const parser = new DramaParser(tokenStream);
@@ -129,23 +184,3 @@ export function formatInput(inputStream: CharStream) {
     const newCode = parseTree.accept(visitor);
     return newCode;
 }
-
-const tCode = `
-
-HIA : HIA R0, R9
-HIA.a R1, HIA
-_.HIA._HIA: HIA R1, HIA
-sbr.d +5
-a:
-NWL
-HIA.a R0, g
-HIA.a:DRU
-cool: HIA R5, +1(-R5)
-STP
-LEZ
-STP
-g: RESGR
-RESGR -10
-`
-
-console.log(formatInput(CharStreams.fromString(tCode)))
