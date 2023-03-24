@@ -1,7 +1,7 @@
 
 import { CharStreams } from 'antlr4';
 import * as vscode from 'vscode';
-import { formatInput } from './test';
+import { formatInput } from './Formatter';
 
 
 export function activate(context: vscode.ExtensionContext) {

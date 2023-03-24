@@ -1,6 +1,6 @@
-import { CommonTokenStream, ParserRuleContext, RuleNode, TerminalNode, CharStreams, ErrorNode, ParseTree } from 'antlr4';
+import { CommonTokenStream, ParserRuleContext, TerminalNode, ErrorNode, RuleNode } from 'antlr4';
 import DramaLexer from './antlr/DRAMA_Lexer';
-import DramaParser, { InstrContext, LineContext, No_argContext, RegContext, Single_argContext, VarContext } from './antlr/drama';
+import DramaParser, { AnrContext, InstrContext, LineContext, No_argContext, RegContext, Single_argContext, VarContext } from './antlr/drama';
 import DramaVisitor from './antlr/dramaVisitor';
 import { StartContext, LabelContext, Double_argContext, CdContext } from './antlr/drama';
 import { CharStream } from 'antlr4';
@@ -36,7 +36,7 @@ class LongestFirstArgVisitor extends DramaVisitor<number> {
         if (fArgs.length === 0)
             return 0;
 
-        const longestARg  =fArgs.reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
+        const longestARg = fArgs.reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
 
 
         return (longestARg.accept(this) as unknown as number[])[0];
@@ -46,19 +46,94 @@ class LongestFirstArgVisitor extends DramaVisitor<number> {
 
 }
 
+class LongestSecondArgVisitor extends DramaVisitor<number> {
+    visitStart: (ctx: StartContext) => number = (ctx) => {
+
+        const fArgs = ctx.line_list()
+            .map(line => line.instr()?.arguments()?.double_arg())
+            .filter(arg => arg !== null && arg !== undefined)
+            .map(x => x.getChild(2) as AnrContext);
+
+        if (fArgs.length === 0)
+            return 0;
+
+        const longestARg = fArgs.reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
+
+
+        return (longestARg.accept(this) as unknown as number[])[0];
+    }
+
+    visitTerminal: (ctx: TerminalNode & ParserRuleContext) => number = ctx => ctx.symbol.text.length;
+
+}
+
+class LongestStringVisitor extends DramaVisitor<number> {
+    visitStart: (ctx: StartContext) => number = (ctx) => {
+
+        const fArgs = ctx.line_list()
+            .map(line => line.instr()?.str())
+            .filter(arg => arg !== null && arg !== undefined)
+
+        if (fArgs.length === 0)
+            return 0;
+
+        const longestARg = fArgs.reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
+
+
+        return (longestARg.accept(this) as unknown as number[])[0];
+    }
+
+    visitTerminal: (ctx: TerminalNode & ParserRuleContext) => number = ctx => ctx.symbol.text.length;
+}
+
+class LongestVarVisitor extends DramaVisitor<number> {
+    visitStart: (ctx: StartContext) => number = (ctx) => {
+
+        const fArgs = ctx.line_list()
+            .map(line => line.instr()?.var_())
+            .filter(arg => arg !== null && arg !== undefined)
+
+        if (fArgs.length === 0)
+            return 0;
+
+        const longestARg = fArgs.reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
+
+
+        return (longestARg.accept(this) as unknown as number[])[0];
+    }
+
+    visitChildren(ctx: ParserRuleContext): number {
+        let sum = 0;
+
+        for (let i = 0; i < ctx.getChildCount(); i++) {
+            sum += this.visit(ctx.getChild(i));
+        }
+
+        return sum;
+    }
+
+    visitTerminal: (ctx: TerminalNode & ParserRuleContext) => number = ctx => ctx.symbol.text.length;
+}
+
+
 class FormatCodeVisitor extends DramaVisitor<string> {
     labelLength: number;
     tokenStream: CommonTokenStream;
     lineCount!: number;
     currentLineIndex = 1;
     firstArgLength: number;
+    secondArgLength: number;
+    totalMaxLineLength: number; // potential to break on single arg instructions, which could be longer
+    currentPosition = 0;
 
     constructor(parseTree: StartContext, tokenStream: CommonTokenStream) {
         super();
         this.lineCount = parseTree.getChildCount();
         this.labelLength = parseTree.accept(new LongestLabelVisitor());
         this.firstArgLength = parseTree.accept(new LongestFirstArgVisitor());
+        this.secondArgLength = parseTree.accept(new LongestSecondArgVisitor());
         this.tokenStream = tokenStream;
+        this.totalMaxLineLength = this.labelLength + 2 + FIRST_ARG_SPACES + this.firstArgLength + 1 + this.secondArgLength;
     }
 
     visitChildren: (ctx: ParserRuleContext) => string = (ctx) => {
@@ -89,10 +164,13 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         return ctx.ID().symbol.text.padStart(this.labelLength) + ": "
     }
     visitLine: (ctx: LineContext) => string = (ctx) => {
+        this.currentPosition = 0;
         let newLine = "";
         if (ctx.label()) {
+            this.currentPosition = this.labelLength + 2;
             newLine += this.visit(ctx.label())
         } else if (ctx.instr()) {
+            this.currentPosition = this.labelLength + 2;
             newLine = " ".repeat(this.labelLength + 2) //todo no labels
         }
 
@@ -162,12 +240,20 @@ function myGetText(node: TerminalNode & ParserRuleContext, tokenStream: CommonTo
 
         if (tokensBefore) {
             for (const token of tokensBefore) {
-                before += token.text
+                before += token.type === DramaLexer.COMMENT ? pleaseThyComment(token.text) : token.text;
             }
         }
         return last ? before : before + node.getText()
     }
     return node.children?.map((node1: any) => myGetText(node1, tokenStream, last)).join() ?? "";
+}
+
+function pleaseThyComment(comment: string): string {
+    if (comment[0] === "|" && comment[1].trim() !== "") { // verifies that the first character is a pipeline and the next character is not whitespace
+        return "| " + comment.slice(2)
+    }
+
+    return comment
 }
 
 export function formatInput(inputStream: CharStream) {

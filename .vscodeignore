@@ -12,3 +12,4 @@ webpack.config.js
 **/.eslintrc.json
 **/*.map
 **/*.ts
+.antlr
