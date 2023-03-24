@@ -77,11 +77,11 @@ this
         "editor.guides.indentation": false
     }
 
-formatter todos
-- when no labels
-- comments + space thingy
+formatter todos:
+- remove spaces from the mode
 
 # CONFIG formatter
 - (un)capitalize labels / dont change
+-  also for keywords
 - multiple layer labels
 - space between arg and instruct

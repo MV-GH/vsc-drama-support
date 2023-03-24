@@ -4,7 +4,7 @@ import DramaParser, { InstrContext, LineContext, No_argContext, Single_argContex
 import DramaVisitor from './antlr/dramaVisitor';
 import { StartContext, LabelContext, Double_argContext } from './antlr/drama';
 import { CharStream } from 'antlr4';
-import CodeStats from './LongestVisitor';
+import CodeStats from './CodeStats';
 
 export const FIRST_ARG_SPACES = 7;
 
@@ -12,8 +12,7 @@ export const FIRST_ARG_SPACES = 7;
 class FormatCodeVisitor extends DramaVisitor<string> {
     tokenStream: CommonTokenStream;
     lineCount!: number;
-    currentLineIndex = 1;
-    currentPosition = 0;
+    currentLinePos = 0;
     codeStats: CodeStats;
 
     constructor(parseTree: StartContext, tokenStream: CommonTokenStream) {
@@ -21,6 +20,7 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         this.lineCount = parseTree.getChildCount();
         this.tokenStream = tokenStream;
         this.codeStats = new CodeStats(parseTree);
+        console.log(this.codeStats)
     }
 
     visitChildren: (ctx: ParserRuleContext) => string = (ctx) => {
@@ -37,10 +37,8 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         if (ctx.symbol.type === DramaParser.EOF) {
             return "";
         }
-        else if (ctx.symbol.type === DramaParser.EOL) {
-            this.currentLineIndex++;
-        }
-        return myGetText(ctx, this.tokenStream, this.currentLineIndex === this.lineCount)
+
+        return this.myGetText(ctx)
     }
 
     visitErrorNode(node: ErrorNode): string {
@@ -51,21 +49,18 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         return ctx.ID().symbol.text.padStart(this.codeStats.labelLength) + ": "
     }
     visitLine: (ctx: LineContext) => string = (ctx) => {
-        this.currentPosition = 0;
-        const labelLen = this.codeStats.labelLength + 2;
         let newLine = "";
         if (ctx.label()) {
-            this.currentPosition = labelLen;
             newLine += this.visit(ctx.label())
         } else if (ctx.instr()) {
-            this.currentPosition = labelLen
-            newLine = " ".repeat(labelLen) //todo no labels
+            newLine = " ".repeat(this.codeStats.labelLength === 0 ? 0 : this.codeStats.labelLength + 2)
         }
 
         if (ctx.instr()) {
             newLine += this.visit(ctx.instr())
-        }
 
+        }
+        this.currentLinePos = newLine.length;
         newLine += this.visit(ctx.EOL())
 
         return newLine
@@ -115,25 +110,28 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         return this.visit(ctx.RESGR()) + post;
     }
 
-}
+    myGetText(node: TerminalNode & ParserRuleContext, last: boolean = false): string {
+        if (node.getChildCount() == 0) {
+            const t = node.symbol;
+            // @ts-ignore: ANTLR4 FIX YOUR TS TARGET
+            const tokensBefore = this.tokenStream.getHiddenTokensToLeft(t.tokenIndex, 1)
 
+            let before = ""
 
-function myGetText(node: TerminalNode & ParserRuleContext, tokenStream: CommonTokenStream, last: boolean = false): string {
-    if (node.getChildCount() == 0) {
-        const t = node.symbol;
-        // @ts-ignore: ANTLR4 FIX YOUR TS TARGET
-        const tokensBefore = tokenStream.getHiddenTokensToLeft(t.tokenIndex, 1)
-
-        let before = ""
-
-        if (tokensBefore) {
-            for (const token of tokensBefore) {
-                before += token.type === DramaLexer.COMMENT ? pleaseThyComment(token.text) : token.text;
+            if (tokensBefore) {
+                console.log(this.currentLinePos)
+                for (const token of tokensBefore) {
+                    before += token.type === DramaLexer.COMMENT ?
+                        " ".repeat(this.currentLinePos !== 0 ? 1 + this.codeStats.totalMaxLineLength - this.currentLinePos : 0)
+                        + pleaseThyComment(token.text) :
+                        token.text;
+                }
             }
+            // Do not add the last EOL, we force add one and we omit it, reduces complexity
+            return (node.symbol.tokenIndex === this.tokenStream.tokens.length - 2) ? before : before + node.getText()
         }
-        return last ? before : before + node.getText()
+        return node.children?.map((node1: any) => this.myGetText(node1)).join() ?? "";
     }
-    return node.children?.map((node1: any) => myGetText(node1, tokenStream, last)).join() ?? "";
 }
 
 function pleaseThyComment(comment: string): string {

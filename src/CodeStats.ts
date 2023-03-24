@@ -119,8 +119,7 @@ export default class CodeStats {
         this.secondArgLength = parseTree.accept(new LongestSecondArgVisitor());
         this.varLength = parseTree.accept(new LongestVarVisitor());
         this.stringLength = parseTree.accept(new LongestStringVisitor());
-        //FIRST_ARG_SPACES + this.firstArgLength + 1 + this.secondArgLength
         this.totalMaxLineLength = this.labelLength !== 0 ? this.labelLength + 2 : 0;
-        this.totalMaxLineLength += FIRST_ARG_SPACES + Math.max(this.stringLength, this.varLength, this.firstArgLength + 1 + this.secondArgLength);
+        this.totalMaxLineLength += FIRST_ARG_SPACES + Math.max(this.stringLength, this.varLength, this.firstArgLength + 2 + this.secondArgLength);
     }
 }
