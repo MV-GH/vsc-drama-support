@@ -78,7 +78,6 @@ this
     }
 
 formatter todos:
-- remove spaces from the mode
 
 # CONFIG formatter
 - (un)capitalize labels / dont change

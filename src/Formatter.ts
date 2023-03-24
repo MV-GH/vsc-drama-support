@@ -1,4 +1,4 @@
-import { CommonTokenStream, ParserRuleContext, TerminalNode, ErrorNode } from 'antlr4';
+import { CommonTokenStream, ParserRuleContext, TerminalNode, ErrorNode, Token } from 'antlr4';
 import DramaLexer from './antlr/DRAMA_Lexer';
 import DramaParser, { InstrContext, LineContext, No_argContext, Single_argContext, VarContext } from './antlr/drama';
 import DramaVisitor from './antlr/dramaVisitor';
@@ -11,13 +11,12 @@ export const FIRST_ARG_SPACES = 7;
 
 class FormatCodeVisitor extends DramaVisitor<string> {
     tokenStream: CommonTokenStream;
-    lineCount!: number;
     currentLinePos = 0;
     codeStats: CodeStats;
 
     constructor(parseTree: StartContext, tokenStream: CommonTokenStream) {
         super();
-        this.lineCount = parseTree.getChildCount();
+        modifyParseTree(tokenStream)
         this.tokenStream = tokenStream;
         this.codeStats = new CodeStats(parseTree);
         console.log(this.codeStats)
@@ -127,8 +126,13 @@ class FormatCodeVisitor extends DramaVisitor<string> {
                         token.text;
                 }
             }
-            // Do not add the last EOL, we force add one and we omit it, reduces complexity
-            return (node.symbol.tokenIndex === this.tokenStream.tokens.length - 2) ? before : before + node.getText()
+
+            // Do not add the last EOL, we force add one and then we omit it, reduces complexity
+            if (node.symbol.tokenIndex === this.tokenStream.tokens.length - 2) {
+                return before
+            }
+            return before + node.getText()
+
         }
         return node.children?.map((node1: any) => this.myGetText(node1)).join() ?? "";
     }
@@ -140,6 +144,12 @@ function pleaseThyComment(comment: string): string {
     }
 
     return comment
+}
+
+function modifyParseTree(tokenStream: CommonTokenStream) {
+    (tokenStream.tokens as unknown as Token[])
+    .filter(t => t.type === DramaLexer.INSTR_MODE)
+    .forEach(t => t.text = t.text.replace(/\s+/g, ""))
 }
 
 export function formatInput(inputStream: CharStream) {
