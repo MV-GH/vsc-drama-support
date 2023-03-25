@@ -21,7 +21,7 @@ instr: (INSTR_MODE arguments) | var | str | EINDPR;
 var: RESGR number?;
 str: STR;
 
-arguments: double_arg | single_arg | no_arg;
+arguments: double_arg | single_arg | no_arg; //TODO remove unnecessary parser rules
 double_arg: (reg | cd) COMMA anr;
 single_arg: anr;
 no_arg:;

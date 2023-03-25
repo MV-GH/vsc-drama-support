@@ -16,14 +16,19 @@ export function activate(context: vscode.ExtensionContext) {
 		"Active you are"
 	);
 
+	
+	
+
 	const disposable = vscode.languages.registerDocumentFormattingEditProvider({ "language": 'drama' }, {
 		provideDocumentFormattingEdits(document) {
 
 			vscode.window.showInformationMessage(
 				"format you shall"
 			);
+
+			const config = vscode.workspace.getConfiguration("drama")
 			try {
-				const output = formatInput(CharStreams.fromString(document.getText() + "\n"))
+				const output = formatInput(CharStreams.fromString(document.getText() + "\n"), config)
 				const range = new vscode.Range(0, 0, document.lineCount, document.lineAt(document.lineCount - 1).text.length);
 				return [vscode.TextEdit.replace(range, output)];
 			} catch (error) {
@@ -35,6 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		}
 	});
+
 	context.subscriptions.push(disposable)
 
 }

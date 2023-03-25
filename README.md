@@ -10,7 +10,11 @@ At the moment it only does syntax highlighting.
 
 ![syntax highlighting example with multiple themes](media/syntax-highlighting-example.gif)
 
-
+ 
+ ### Formatter
+ - formats drama files into a more readable format
+ - has options, for keywords and labels
+  
 
 ---
 ## Release Notes
@@ -73,14 +77,17 @@ In regards from valid syntax, in my attempt to formalise the spec of DRAMA
 # TODOS
 - UPdate syntax highlighting to add s+1 garbage
 this
-    "[.dra]": {
-        "editor.guides.indentation": false
-    }
+
+todo
 
 formatter todos:
+- formatting bs s+t
+- options
+- dont touch bad lines
+- file icons
 
 # CONFIG formatter
 - (un)capitalize labels / dont change
--  also for keywords
+- also for keywords
 - multiple layer labels
 - space between arg and instruct

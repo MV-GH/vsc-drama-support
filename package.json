@@ -51,7 +51,42 @@
         "scopeName": "source.dra",
         "path": "./syntaxes/drama.tmLanguage.json"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "DRAMA Support",
+      "properties": {
+        "drama.casing.keyword": {
+          "type": "string",
+          "enum": [
+            "To upper",
+            "To lower",
+            "Do not change"
+          ],
+          "default": "To upper",
+          "description": "(Un)capitalizes or do no change all the keywords."
+        },
+        "drama.casing.label": {
+          "type": "string",
+          "enum": [
+            "To upper",
+            "To lower",
+            "Do not change"
+          ],
+          "default": "To lower",
+          "description": "(Un)capitalizes or do no change all the labels."
+        },
+        "drama.multipleLabelLayer": {
+          "type": "boolean",
+          "default": false,
+          "description": "[TODO] Label only lines cause a label indentation."
+        }
+      }
+    },
+    "configurationDefaults": {
+      "[drama]": {
+        "editor.guides.indentation": false
+      }
+    }
   },
   "dependencies": {},
   "devDependencies": {

@@ -5,6 +5,8 @@ import DramaVisitor from './antlr/dramaVisitor';
 import { StartContext, LabelContext, Double_argContext } from './antlr/drama';
 import { CharStream } from 'antlr4';
 import CodeStats from './CodeStats';
+import * as vscode from 'vscode';
+import DRAMA_Lexer from './antlr/DRAMA_Lexer';
 
 export const FIRST_ARG_SPACES = 7;
 
@@ -14,12 +16,11 @@ class FormatCodeVisitor extends DramaVisitor<string> {
     currentLinePos = 0;
     codeStats: CodeStats;
 
-    constructor(parseTree: StartContext, tokenStream: CommonTokenStream) {
+    constructor(parseTree: StartContext, tokenStream: CommonTokenStream, config: vscode.WorkspaceConfiguration) {
         super();
-        modifyParseTree(tokenStream)
+        modifyParseTree(tokenStream, config)
         this.tokenStream = tokenStream;
         this.codeStats = new CodeStats(parseTree);
-        console.log(this.codeStats)
     }
 
     visitChildren: (ctx: ParserRuleContext) => string = (ctx) => {
@@ -118,7 +119,7 @@ class FormatCodeVisitor extends DramaVisitor<string> {
             let before = ""
 
             if (tokensBefore) {
-                console.log(this.currentLinePos)
+
                 for (const token of tokensBefore) {
                     before += token.type === DramaLexer.COMMENT ?
                         " ".repeat(this.currentLinePos !== 0 ? 1 + this.codeStats.totalMaxLineLength - this.currentLinePos : 0)
@@ -146,20 +147,62 @@ function pleaseThyComment(comment: string): string {
     return comment
 }
 
-function modifyParseTree(tokenStream: CommonTokenStream) {
-    (tokenStream.tokens as unknown as Token[])
-    .filter(t => t.type === DramaLexer.INSTR_MODE)
-    .forEach(t => t.text = t.text.replace(/\s+/g, ""))
+function modifyParseTree(tokenStream: CommonTokenStream, config: vscode.WorkspaceConfiguration) {
+
+    const casing: Casing = config.get("casing") || { keyword: CaseOptions.DoNotChange, label: CaseOptions.DoNotChange };
+
+    for (const token of tokenStream.tokens as unknown as Token[]) {
+        if (token.type === DramaLexer.INSTR_MODE) {
+            token.text = token.text.replace(/\s+/g, "")
+        }
+        if (casing.keyword !== CaseOptions.DoNotChange && isKeyword(token.type)) {
+            if (token.type === DramaLexer.INSTR_MODE) {
+                const group = token.text.match("^(.+?)(\\.\\w)?$")!;
+                token.text = applyCaseOption(group[1], casing.keyword)
+                if (group[2] !== undefined) {
+                    token.text += group[2].toLowerCase()
+                }
+            } else {
+                token.text = applyCaseOption(token.text, casing.keyword)
+            }
+
+
+        } else if (isLabel(token.type) && casing.label !== CaseOptions.DoNotChange) {
+            token.text = applyCaseOption(token.text, casing.label)
+        }
+    }
+
 }
 
-export function formatInput(inputStream: CharStream) {
+function applyCaseOption(text: string, caseOption: CaseOptions) {
+    return caseOption === CaseOptions.ToUpper ? text.toUpperCase() : text.toLowerCase()
+}
+
+function isKeyword(type: number) {
+    return [DramaLexer.REGISTER, DramaLexer.CD, DramaLexer.INSTR_MODE, DRAMA_Lexer.INSTR, DRAMA_Lexer.RESGR, DRAMA_Lexer.EINDPR].includes(type);
+}
+function isLabel(type: number) {
+    return DramaLexer.ID === type;
+}
+
+interface Casing { keyword: CaseOptions; label: CaseOptions }
+
+enum CaseOptions {
+    DoNotChange = "Do not change",
+    ToUpper = "To upper",
+    ToLower = "To lower",
+}
+
+
+export function formatInput(inputStream: CharStream, config: vscode.WorkspaceConfiguration) {
 
     const lexer = new DramaLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
     const parser = new DramaParser(tokenStream);
     const parseTree = parser.start();
-    const visitor = new FormatCodeVisitor(parseTree, tokenStream);
+    const visitor = new FormatCodeVisitor(parseTree, tokenStream, config);
 
     const newCode = parseTree.accept(visitor);
     return newCode;
 }
+
