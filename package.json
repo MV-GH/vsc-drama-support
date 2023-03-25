@@ -42,7 +42,11 @@
         "extensions": [
           ".dra"
         ],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./media/DramaIcon.gif",
+          "dark": "./media/DramaIcon.gif"
+        }
       }
     ],
     "grammars": [
