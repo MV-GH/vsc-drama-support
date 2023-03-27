@@ -8,16 +8,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 	console.log('Congratulations, your extension "drama-support" is now active!');
 
-	//Create output channel
-	let orange = vscode.window.createOutputChannel("Orange");
-	orange.show()
+
 	//Write to output.
 	vscode.window.showInformationMessage(
 		"Active you are"
 	);
-
-	
-	
 
 	const disposable = vscode.languages.registerDocumentFormattingEditProvider({ "language": 'drama' }, {
 		provideDocumentFormattingEdits(document) {
@@ -33,11 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
 				return [vscode.TextEdit.replace(range, output)];
 			} catch (error) {
 				console.error(error)
-				orange.append((error as Error).message)
 			}
-
-
-
 		}
 	});
 

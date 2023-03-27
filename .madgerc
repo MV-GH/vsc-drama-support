@@ -1,0 +1,8 @@
+{
+    "includeNpm":true,
+	"detectiveOptions": {
+		"ts": {
+			"skipTypeImports": true
+		}
+	}
+}

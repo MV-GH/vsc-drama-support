@@ -1,20 +1,21 @@
-import { CommonTokenStream, ParserRuleContext, TerminalNode, ErrorNode, Token } from 'antlr4';
+import { CommonTokenStream, ParserRuleContext, TerminalNode, ErrorNode, Interval, CharStream } from 'antlr4';
 import DramaLexer from './antlr/DRAMA_Lexer';
-import DramaParser, { InstrContext, LineContext, No_argContext, Single_argContext, VarContext } from './antlr/drama';
+import DramaParser, { InstrContext, LineContext, No_argContext, Single_argContext, VarContext, StartContext, LabelContext, Double_argContext } from './antlr/drama';
 import DramaVisitor from './antlr/dramaVisitor';
-import { StartContext, LabelContext, Double_argContext } from './antlr/drama';
-import { CharStream } from 'antlr4';
 import CodeStats from './CodeStats';
-import * as vscode from 'vscode';
-import DRAMA_Lexer from './antlr/DRAMA_Lexer';
 
-export const FIRST_ARG_SPACES = 7;
+import modifyParseTree from './ParseTreeModifier';
+import * as vscode from 'vscode';
+import { FIRST_ARG_SPACES } from './Constants';
+
+
 
 
 class FormatCodeVisitor extends DramaVisitor<string> {
     tokenStream: CommonTokenStream;
     currentLinePos = 0;
     codeStats: CodeStats;
+
 
     constructor(parseTree: StartContext, tokenStream: CommonTokenStream, config: vscode.WorkspaceConfiguration) {
         super();
@@ -49,6 +50,11 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         return ctx.ID().symbol.text.padStart(this.codeStats.labelLength) + ": "
     }
     visitLine: (ctx: LineContext) => string = (ctx) => {
+        // if (hasErrorNode(ctx)) { // Exit early if this node contains error nodes, return original text
+        //     return this.tokenStream.getText(new Interval(ctx.start.start, ctx.stop!.stop))
+        // }
+
+
         let newLine = "";
         if (ctx.label()) {
             newLine += this.visit(ctx.label())
@@ -147,58 +153,29 @@ function pleaseThyComment(comment: string): string {
     return comment
 }
 
-function modifyParseTree(tokenStream: CommonTokenStream, config: vscode.WorkspaceConfiguration) {
-
-    const casing: Casing = config.get("casing") || { keyword: CaseOptions.DoNotChange, label: CaseOptions.DoNotChange };
-
-    for (const token of tokenStream.tokens as unknown as Token[]) {
-        if (token.type === DramaLexer.INSTR_MODE) {
-            token.text = token.text.replace(/\s+/g, "")
-        }
-        if (casing.keyword !== CaseOptions.DoNotChange && isKeyword(token.type)) {
-            if (token.type === DramaLexer.INSTR_MODE) {
-                const group = token.text.match("^(.+?)(\\.\\w)?$")!;
-                token.text = applyCaseOption(group[1], casing.keyword)
-                if (group[2] !== undefined) {
-                    token.text += group[2].toLowerCase()
-                }
-            } else {
-                token.text = applyCaseOption(token.text, casing.keyword)
-            }
+const l =ErrorNode
 
 
-        } else if (isLabel(token.type) && casing.label !== CaseOptions.DoNotChange) {
-            token.text = applyCaseOption(token.text, casing.label)
+
+function hasErrorNode(node: ParserRuleContext) {
+    console.log(ErrorNode) //
+    if (node instanceof ErrorNode) {
+        return true
+    }
+    for (const child of node.children!) {
+        if (hasErrorNode(child as ParserRuleContext)) {
+            return true
         }
     }
-
+    return false
 }
-
-function applyCaseOption(text: string, caseOption: CaseOptions) {
-    return caseOption === CaseOptions.ToUpper ? text.toUpperCase() : text.toLowerCase()
-}
-
-function isKeyword(type: number) {
-    return [DramaLexer.REGISTER, DramaLexer.CD, DramaLexer.INSTR_MODE, DRAMA_Lexer.INSTR, DRAMA_Lexer.RESGR, DRAMA_Lexer.EINDPR].includes(type);
-}
-function isLabel(type: number) {
-    return DramaLexer.ID === type;
-}
-
-interface Casing { keyword: CaseOptions; label: CaseOptions }
-
-enum CaseOptions {
-    DoNotChange = "Do not change",
-    ToUpper = "To upper",
-    ToLower = "To lower",
-}
-
 
 export function formatInput(inputStream: CharStream, config: vscode.WorkspaceConfiguration) {
 
     const lexer = new DramaLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
     const parser = new DramaParser(tokenStream);
+    parser.removeErrorListeners()
     const parseTree = parser.start();
     const visitor = new FormatCodeVisitor(parseTree, tokenStream, config);
 

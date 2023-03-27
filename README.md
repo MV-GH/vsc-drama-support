@@ -79,12 +79,13 @@ In regards from valid syntax, in my attempt to formalise the spec of DRAMA
 this
 
 todo
+clean up grammar
 
 formatter todos:
 - formatting bs s+t
-- options
+- options: left leaning label, move comments at instruction level
 - dont touch bad lines
-- file icons
+
 
 # CONFIG formatter
 - (un)capitalize labels / dont change

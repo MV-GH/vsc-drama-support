@@ -3,24 +3,7 @@
 import {ParseTreeVisitor} from 'antlr4';
 
 
-import { StartContext } from "./drama";
-import { LineContext } from "./drama";
-import { InstrContext } from "./drama";
-import { VarContext } from "./drama";
-import { StrContext } from "./drama";
-import { ArgumentsContext } from "./drama";
-import { Double_argContext } from "./drama";
-import { Single_argContext } from "./drama";
-import { No_argContext } from "./drama";
-import { RegContext } from "./drama";
-import { CdContext } from "./drama";
-import { SignContext } from "./drama";
-import { AnrContext } from "./drama";
-import { AdrContext } from "./drama";
-import { IndexContext } from "./drama";
-import { LabelContext } from "./drama";
-import { NumberContext } from "./drama";
-
+import type * as drama from "./drama";
 
 /**
  * This interface defines a complete generic visitor for a parse tree produced
@@ -35,102 +18,102 @@ export default class dramaVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitStart?: (ctx: StartContext) => Result;
+	visitStart?: (ctx: drama.StartContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.line`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitLine?: (ctx: LineContext) => Result;
+	visitLine?: (ctx: drama.LineContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.instr`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitInstr?: (ctx: InstrContext) => Result;
+	visitInstr?: (ctx: drama.InstrContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.var`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitVar?: (ctx: VarContext) => Result;
+	visitVar?: (ctx: drama.VarContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.str`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitStr?: (ctx: StrContext) => Result;
+	visitStr?: (ctx: drama.StrContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.arguments`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitArguments?: (ctx: ArgumentsContext) => Result;
+	visitArguments?: (ctx: drama.ArgumentsContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.double_arg`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitDouble_arg?: (ctx: Double_argContext) => Result;
+	visitDouble_arg?: (ctx: drama.Double_argContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.single_arg`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitSingle_arg?: (ctx: Single_argContext) => Result;
+	visitSingle_arg?: (ctx: drama.Single_argContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.no_arg`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitNo_arg?: (ctx: No_argContext) => Result;
+	visitNo_arg?: (ctx: drama.No_argContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.reg`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitReg?: (ctx: RegContext) => Result;
+	visitReg?: (ctx: drama.RegContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.cd`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitCd?: (ctx: CdContext) => Result;
+	visitCd?: (ctx: drama.CdContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.sign`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitSign?: (ctx: SignContext) => Result;
+	visitSign?: (ctx: drama.SignContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.anr`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitAnr?: (ctx: AnrContext) => Result;
+	visitAnr?: (ctx: drama.AnrContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.adr`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitAdr?: (ctx: AdrContext) => Result;
+	visitAdr?: (ctx: drama.AdrContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.index`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitIndex?: (ctx: IndexContext) => Result;
+	visitIndex?: (ctx: drama.IndexContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.label`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitLabel?: (ctx: LabelContext) => Result;
+	visitLabel?: (ctx: drama.LabelContext) => Result;
 	/**
 	 * Visit a parse tree produced by `drama.number`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitNumber?: (ctx: NumberContext) => Result;
+	visitNumber?: (ctx: drama.NumberContext) => Result;
 }
 

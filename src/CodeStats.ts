@@ -1,7 +1,7 @@
 import { ParserRuleContext, TerminalNode } from "antlr4";
 import { StartContext, LabelContext, RegContext, CdContext, AnrContext } from "./antlr/drama";
 import DramaVisitor from "./antlr/dramaVisitor";
-import { FIRST_ARG_SPACES } from "./Formatter";
+import { FIRST_ARG_SPACES } from "./Constants";
 
 class BaseLongestVisitor extends DramaVisitor<number> {
 

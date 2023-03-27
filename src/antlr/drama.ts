@@ -12,7 +12,7 @@ import {
 	Token, TokenStream,
 	Interval, IntervalSet
 } from 'antlr4';
-import dramaVisitor from "./dramaVisitor.js";
+import type dramaVisitor  from "./dramaVisitor.js";
 
 // for running tests with parameters, TODO: discuss strategy for typed parameters in CI
 // eslint-disable-next-line no-unused-vars
