@@ -76,10 +76,11 @@ In regards from valid syntax, in my attempt to formalise the spec of DRAMA
 
 # TODOS
 - UPdate syntax highlighting to add s+1 garbage
-this
+- optional Program line only line support, only actual instructions count as line
 
 todo
 clean up grammar
+ADD missing support for ARRAY declaration using <LABEL:>  VALUE; VALUE; VALUE
 
 formatter todos:
 - formatting bs s+t

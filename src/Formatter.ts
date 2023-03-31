@@ -50,7 +50,7 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         return ctx.ID().symbol.text.padStart(this.codeStats.labelLength) + ": "
     }
     visitLine: (ctx: LineContext) => string = (ctx) => {
-        // if (hasErrorNode(ctx)) { // Exit early if this node contains error nodes, return original text
+        // if (hasErrorNode(ctx as ParserRuleContext)) { // Exit early if this node contains error nodes, return original text
         //     return this.tokenStream.getText(new Interval(ctx.start.start, ctx.stop!.stop))
         // }
 
@@ -153,17 +153,19 @@ function pleaseThyComment(comment: string): string {
     return comment
 }
 
-const l =ErrorNode
+const l = ErrorNode
 
 
 
-function hasErrorNode(node: ParserRuleContext) {
-    console.log(ErrorNode) //
-    if (node instanceof ErrorNode) {
+function hasErrorNode(node: ParserRuleContext & { isErrorNode?: () => boolean }) {
+    if (node.isErrorNode && node.isErrorNode()) {
         return true
+    } else if (node.children == undefined) {
+        return false
     }
-    for (const child of node.children!) {
-        if (hasErrorNode(child as ParserRuleContext)) {
+
+    for (const [_, child] of Object.entries(node.children)) {
+        if (hasErrorNode(child as ParserRuleContext & { isErrorNode?: () => boolean })) {
             return true
         }
     }
