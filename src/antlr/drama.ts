@@ -12,14 +12,11 @@ import {
 	Token, TokenStream,
 	Interval, IntervalSet
 } from 'antlr4';
-import type dramaVisitor  from "./dramaVisitor.js";
+import dramaVisitor from "./dramaVisitor.js";
 
 // for running tests with parameters, TODO: discuss strategy for typed parameters in CI
 // eslint-disable-next-line no-unused-vars
 type int = number;
-
-
-
 
 export default class drama extends Parser {
 	public static readonly COMMENT = 1;
@@ -73,27 +70,27 @@ export default class drama extends Parser {
 	public static readonly MINUS = 49;
 	public static readonly PLUS = 50;
 	public static readonly COLON = 51;
-	public static readonly LP = 52;
-	public static readonly RP = 53;
-	public static readonly OTHER = 54;
+	public static readonly SEMI_COLON = 52;
+	public static readonly LP = 53;
+	public static readonly RP = 54;
 	public static readonly EOF = Token.EOF;
 	public static readonly RULE_start = 0;
 	public static readonly RULE_line = 1;
 	public static readonly RULE_instr = 2;
 	public static readonly RULE_var = 3;
-	public static readonly RULE_str = 4;
-	public static readonly RULE_arguments = 5;
-	public static readonly RULE_double_arg = 6;
-	public static readonly RULE_single_arg = 7;
-	public static readonly RULE_no_arg = 8;
-	public static readonly RULE_reg = 9;
-	public static readonly RULE_cd = 10;
-	public static readonly RULE_sign = 11;
-	public static readonly RULE_anr = 12;
-	public static readonly RULE_adr = 13;
-	public static readonly RULE_index = 14;
-	public static readonly RULE_label = 15;
-	public static readonly RULE_number = 16;
+	public static readonly RULE_arguments = 4;
+	public static readonly RULE_double_arg = 5;
+	public static readonly RULE_single_arg = 6;
+	public static readonly RULE_no_arg = 7;
+	public static readonly RULE_reg = 8;
+	public static readonly RULE_cd = 9;
+	public static readonly RULE_sign = 10;
+	public static readonly RULE_anr = 11;
+	public static readonly RULE_adr = 12;
+	public static readonly RULE_index = 13;
+	public static readonly RULE_label = 14;
+	public static readonly RULE_number = 15;
+	public static readonly RULE_arr = 16;
 	public static readonly literalNames: (string | null)[] = [ null, null, 
                                                             null, null, 
                                                             null, null, 
@@ -120,8 +117,8 @@ export default class drama extends Parser {
                                                             "'.'", "','", 
                                                             "'|'", "'_'", 
                                                             "'-'", "'+'", 
-                                                            "':'", "'('", 
-                                                            "')'" ];
+                                                            "':'", "';'", 
+                                                            "'('", "')'" ];
 	public static readonly symbolicNames: (string | null)[] = [ null, "COMMENT", 
                                                              "STR", "INSTR_MODE", 
                                                              "MODE", "WS", 
@@ -149,12 +146,13 @@ export default class drama extends Parser {
                                                              "PIPELINE", 
                                                              "UNDERSCORE", 
                                                              "MINUS", "PLUS", 
-                                                             "COLON", "LP", 
-                                                             "RP", "OTHER" ];
+                                                             "COLON", "SEMI_COLON", 
+                                                             "LP", "RP" ];
 	// tslint:disable:no-trailing-whitespace
 	public static readonly ruleNames: string[] = [
-		"start", "line", "instr", "var", "str", "arguments", "double_arg", "single_arg", 
-		"no_arg", "reg", "cd", "sign", "anr", "adr", "index", "label", "number",
+		"start", "line", "instr", "var", "arguments", "double_arg", "single_arg", 
+		"no_arg", "reg", "cd", "sign", "anr", "adr", "index", "label", "number", 
+		"arr",
 	];
 	public get grammarFileName(): string { return "drama.g4"; }
 	public get literalNames(): (string | null)[] { return drama.literalNames; }
@@ -181,7 +179,7 @@ export default class drama extends Parser {
 			this.state = 37;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & 201326604) !== 0) || _la===42 || _la===43) {
+			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & 201326604) !== 0) || ((((_la - 42)) & ~0x1F) === 0 && ((1 << (_la - 42)) & 391) !== 0)) {
 				{
 				{
 				this.state = 34;
@@ -232,7 +230,7 @@ export default class drama extends Parser {
 			this.state = 46;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 201326604) !== 0)) {
+			if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 201326604) !== 0) || ((((_la - 44)) & ~0x1F) === 0 && ((1 << (_la - 44)) & 97) !== 0)) {
 				{
 				this.state = 45;
 				this.instr();
@@ -285,10 +283,13 @@ export default class drama extends Parser {
 				}
 				break;
 			case 2:
+			case 44:
+			case 49:
+			case 50:
 				this.enterOuterAlt(localctx, 3);
 				{
 				this.state = 53;
-				this.str();
+				this.arr();
 				}
 				break;
 			case 26:
@@ -353,56 +354,31 @@ export default class drama extends Parser {
 		return localctx;
 	}
 	// @RuleVersion(0)
-	public str(): StrContext {
-		let localctx: StrContext = new StrContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 8, drama.RULE_str);
-		try {
-			this.enterOuterAlt(localctx, 1);
-			{
-			this.state = 61;
-			this.match(drama.STR);
-			}
-		}
-		catch (re) {
-			if (re instanceof RecognitionException) {
-				localctx.exception = re;
-				this._errHandler.reportError(this, re);
-				this._errHandler.recover(this, re);
-			} else {
-				throw re;
-			}
-		}
-		finally {
-			this.exitRule();
-		}
-		return localctx;
-	}
-	// @RuleVersion(0)
 	public arguments(): ArgumentsContext {
 		let localctx: ArgumentsContext = new ArgumentsContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 10, drama.RULE_arguments);
+		this.enterRule(localctx, 8, drama.RULE_arguments);
 		try {
-			this.state = 66;
+			this.state = 64;
 			this._errHandler.sync(this);
 			switch ( this._interp.adaptivePredict(this._input, 5, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 63;
+				this.state = 61;
 				this.double_arg();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 64;
+				this.state = 62;
 				this.single_arg();
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 65;
+				this.state = 63;
 				this.no_arg();
 				}
 				break;
@@ -425,31 +401,31 @@ export default class drama extends Parser {
 	// @RuleVersion(0)
 	public double_arg(): Double_argContext {
 		let localctx: Double_argContext = new Double_argContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 12, drama.RULE_double_arg);
+		this.enterRule(localctx, 10, drama.RULE_double_arg);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 70;
+			this.state = 68;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case 28:
 				{
-				this.state = 68;
+				this.state = 66;
 				this.reg();
 				}
 				break;
 			case 29:
 				{
-				this.state = 69;
+				this.state = 67;
 				this.cd();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
-			this.state = 72;
+			this.state = 70;
 			this.match(drama.COMMA);
-			this.state = 73;
+			this.state = 71;
 			this.anr();
 			}
 		}
@@ -470,11 +446,11 @@ export default class drama extends Parser {
 	// @RuleVersion(0)
 	public single_arg(): Single_argContext {
 		let localctx: Single_argContext = new Single_argContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 14, drama.RULE_single_arg);
+		this.enterRule(localctx, 12, drama.RULE_single_arg);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 75;
+			this.state = 73;
 			this.anr();
 			}
 		}
@@ -495,7 +471,7 @@ export default class drama extends Parser {
 	// @RuleVersion(0)
 	public no_arg(): No_argContext {
 		let localctx: No_argContext = new No_argContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 16, drama.RULE_no_arg);
+		this.enterRule(localctx, 14, drama.RULE_no_arg);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			// tslint:disable-next-line:no-empty
@@ -519,11 +495,11 @@ export default class drama extends Parser {
 	// @RuleVersion(0)
 	public reg(): RegContext {
 		let localctx: RegContext = new RegContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 18, drama.RULE_reg);
+		this.enterRule(localctx, 16, drama.RULE_reg);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 79;
+			this.state = 77;
 			this.match(drama.REGISTER);
 			}
 		}
@@ -544,11 +520,11 @@ export default class drama extends Parser {
 	// @RuleVersion(0)
 	public cd(): CdContext {
 		let localctx: CdContext = new CdContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 20, drama.RULE_cd);
+		this.enterRule(localctx, 18, drama.RULE_cd);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 81;
+			this.state = 79;
 			this.match(drama.CD);
 			}
 		}
@@ -569,12 +545,12 @@ export default class drama extends Parser {
 	// @RuleVersion(0)
 	public sign(): SignContext {
 		let localctx: SignContext = new SignContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 22, drama.RULE_sign);
+		this.enterRule(localctx, 20, drama.RULE_sign);
 		let _la: number;
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 83;
+			this.state = 81;
 			_la = this._input.LA(1);
 			if(!(_la===49 || _la===50)) {
 			this._errHandler.recoverInline(this);
@@ -602,16 +578,16 @@ export default class drama extends Parser {
 	// @RuleVersion(0)
 	public anr(): AnrContext {
 		let localctx: AnrContext = new AnrContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 24, drama.RULE_anr);
+		this.enterRule(localctx, 22, drama.RULE_anr);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 87;
+			this.state = 85;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case 28:
 				{
-				this.state = 85;
+				this.state = 83;
 				this.match(drama.REGISTER);
 				}
 				break;
@@ -619,7 +595,7 @@ export default class drama extends Parser {
 			case 44:
 			case 49:
 				{
-				this.state = 86;
+				this.state = 84;
 				this.adr();
 				}
 				break;
@@ -645,24 +621,24 @@ export default class drama extends Parser {
 	// @RuleVersion(0)
 	public adr(): AdrContext {
 		let localctx: AdrContext = new AdrContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 26, drama.RULE_adr);
+		this.enterRule(localctx, 24, drama.RULE_adr);
 		let _la: number;
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 120;
+			this.state = 118;
 			this._errHandler.sync(this);
 			switch ( this._interp.adaptivePredict(this._input, 13, this._ctx) ) {
 			case 1:
 				{
-				this.state = 89;
+				this.state = 87;
 				this.match(drama.ID);
-				this.state = 91;
+				this.state = 89;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				if (_la===52) {
+				if (_la===53) {
 					{
-					this.state = 90;
+					this.state = 88;
 					this.index();
 					}
 				}
@@ -671,24 +647,24 @@ export default class drama extends Parser {
 				break;
 			case 2:
 				{
-				this.state = 94;
+				this.state = 92;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 				if (_la===49) {
 					{
-					this.state = 93;
+					this.state = 91;
 					this.match(drama.MINUS);
 					}
 				}
 
-				this.state = 96;
+				this.state = 94;
 				this.match(drama.INT);
-				this.state = 98;
+				this.state = 96;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				if (_la===52) {
+				if (_la===53) {
 					{
-					this.state = 97;
+					this.state = 95;
 					this.index();
 					}
 				}
@@ -697,28 +673,28 @@ export default class drama extends Parser {
 				break;
 			case 3:
 				{
-				this.state = 100;
+				this.state = 98;
 				this.match(drama.ID);
-				this.state = 101;
+				this.state = 99;
 				this.sign();
-				this.state = 102;
+				this.state = 100;
 				this.match(drama.INT);
 				}
 				break;
 			case 4:
 				{
-				this.state = 104;
+				this.state = 102;
 				this.match(drama.ID);
-				this.state = 105;
+				this.state = 103;
 				this.sign();
-				this.state = 106;
+				this.state = 104;
 				this.match(drama.INT);
-				this.state = 108;
+				this.state = 106;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				if (_la===52) {
+				if (_la===53) {
 					{
-					this.state = 107;
+					this.state = 105;
 					this.index();
 					}
 				}
@@ -727,28 +703,28 @@ export default class drama extends Parser {
 				break;
 			case 5:
 				{
-				this.state = 110;
+				this.state = 108;
 				this.match(drama.INT);
-				this.state = 111;
+				this.state = 109;
 				this.sign();
-				this.state = 112;
+				this.state = 110;
 				this.match(drama.ID);
 				}
 				break;
 			case 6:
 				{
-				this.state = 114;
+				this.state = 112;
 				this.match(drama.INT);
-				this.state = 115;
+				this.state = 113;
 				this.sign();
-				this.state = 116;
+				this.state = 114;
 				this.match(drama.ID);
-				this.state = 118;
+				this.state = 116;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				if (_la===52) {
+				if (_la===53) {
 					{
-					this.state = 117;
+					this.state = 115;
 					this.index();
 					}
 				}
@@ -775,21 +751,21 @@ export default class drama extends Parser {
 	// @RuleVersion(0)
 	public index(): IndexContext {
 		let localctx: IndexContext = new IndexContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 28, drama.RULE_index);
+		this.enterRule(localctx, 26, drama.RULE_index);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 122;
+			this.state = 120;
 			this.match(drama.LP);
-			this.state = 129;
+			this.state = 127;
 			this._errHandler.sync(this);
 			switch ( this._interp.adaptivePredict(this._input, 14, this._ctx) ) {
 			case 1:
 				{
 				{
-				this.state = 123;
+				this.state = 121;
 				this.sign();
-				this.state = 124;
+				this.state = 122;
 				this.match(drama.REGISTER);
 				}
 				}
@@ -797,9 +773,9 @@ export default class drama extends Parser {
 			case 2:
 				{
 				{
-				this.state = 126;
+				this.state = 124;
 				this.match(drama.REGISTER);
-				this.state = 127;
+				this.state = 125;
 				this.sign();
 				}
 				}
@@ -807,13 +783,13 @@ export default class drama extends Parser {
 			case 3:
 				{
 				{
-				this.state = 128;
+				this.state = 126;
 				this.match(drama.REGISTER);
 				}
 				}
 				break;
 			}
-			this.state = 131;
+			this.state = 129;
 			this.match(drama.RP);
 			}
 		}
@@ -834,13 +810,13 @@ export default class drama extends Parser {
 	// @RuleVersion(0)
 	public label(): LabelContext {
 		let localctx: LabelContext = new LabelContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 30, drama.RULE_label);
+		this.enterRule(localctx, 28, drama.RULE_label);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 133;
+			this.state = 131;
 			this.match(drama.ID);
-			this.state = 134;
+			this.state = 132;
 			this.match(drama.COLON);
 			}
 		}
@@ -861,22 +837,22 @@ export default class drama extends Parser {
 	// @RuleVersion(0)
 	public number_(): NumberContext {
 		let localctx: NumberContext = new NumberContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 32, drama.RULE_number);
+		this.enterRule(localctx, 30, drama.RULE_number);
 		let _la: number;
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 137;
+			this.state = 135;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la===49 || _la===50) {
 				{
-				this.state = 136;
+				this.state = 134;
 				this.sign();
 				}
 			}
 
-			this.state = 139;
+			this.state = 137;
 			this.match(drama.INT);
 			}
 		}
@@ -894,51 +870,134 @@ export default class drama extends Parser {
 		}
 		return localctx;
 	}
+	// @RuleVersion(0)
+	public arr(): ArrContext {
+		let localctx: ArrContext = new ArrContext(this, this._ctx, this.state);
+		this.enterRule(localctx, 32, drama.RULE_arr);
+		let _la: number;
+		try {
+			this.enterOuterAlt(localctx, 1);
+			{
+			this.state = 141;
+			this._errHandler.sync(this);
+			switch (this._input.LA(1)) {
+			case 44:
+			case 49:
+			case 50:
+				{
+				this.state = 139;
+				this.number_();
+				}
+				break;
+			case 2:
+				{
+				this.state = 140;
+				this.match(drama.STR);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+			this.state = 150;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			while (_la===52) {
+				{
+				{
+				this.state = 143;
+				this.match(drama.SEMI_COLON);
+				this.state = 146;
+				this._errHandler.sync(this);
+				switch (this._input.LA(1)) {
+				case 44:
+				case 49:
+				case 50:
+					{
+					this.state = 144;
+					this.number_();
+					}
+					break;
+				case 2:
+					{
+					this.state = 145;
+					this.match(drama.STR);
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				}
+				}
+				this.state = 152;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+			}
+			}
+		}
+		catch (re) {
+			if (re instanceof RecognitionException) {
+				localctx.exception = re;
+				this._errHandler.reportError(this, re);
+				this._errHandler.recover(this, re);
+			} else {
+				throw re;
+			}
+		}
+		finally {
+			this.exitRule();
+		}
+		return localctx;
+	}
 
-	public static readonly _serializedATN: number[] = [4,1,54,142,2,0,7,0,2,
+	public static readonly _serializedATN: number[] = [4,1,54,154,2,0,7,0,2,
 	1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,7,7,2,8,7,8,2,9,7,9,2,
 	10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,2,15,7,15,2,16,7,16,1,0,
 	5,0,36,8,0,10,0,12,0,39,9,0,1,0,1,0,1,1,3,1,44,8,1,1,1,3,1,47,8,1,1,1,1,
-	1,1,2,1,2,1,2,1,2,1,2,3,2,56,8,2,1,3,1,3,3,3,60,8,3,1,4,1,4,1,5,1,5,1,5,
-	3,5,67,8,5,1,6,1,6,3,6,71,8,6,1,6,1,6,1,6,1,7,1,7,1,8,1,8,1,9,1,9,1,10,
-	1,10,1,11,1,11,1,12,1,12,3,12,88,8,12,1,13,1,13,3,13,92,8,13,1,13,3,13,
-	95,8,13,1,13,1,13,3,13,99,8,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,
-	3,13,109,8,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,3,13,119,8,13,3,13,
-	121,8,13,1,14,1,14,1,14,1,14,1,14,1,14,1,14,3,14,130,8,14,1,14,1,14,1,15,
-	1,15,1,15,1,16,3,16,138,8,16,1,16,1,16,1,16,0,0,17,0,2,4,6,8,10,12,14,16,
-	18,20,22,24,26,28,30,32,0,1,1,0,49,50,148,0,37,1,0,0,0,2,43,1,0,0,0,4,55,
-	1,0,0,0,6,57,1,0,0,0,8,61,1,0,0,0,10,66,1,0,0,0,12,70,1,0,0,0,14,75,1,0,
-	0,0,16,77,1,0,0,0,18,79,1,0,0,0,20,81,1,0,0,0,22,83,1,0,0,0,24,87,1,0,0,
-	0,26,120,1,0,0,0,28,122,1,0,0,0,30,133,1,0,0,0,32,137,1,0,0,0,34,36,3,2,
-	1,0,35,34,1,0,0,0,36,39,1,0,0,0,37,35,1,0,0,0,37,38,1,0,0,0,38,40,1,0,0,
-	0,39,37,1,0,0,0,40,41,5,0,0,1,41,1,1,0,0,0,42,44,3,30,15,0,43,42,1,0,0,
-	0,43,44,1,0,0,0,44,46,1,0,0,0,45,47,3,4,2,0,46,45,1,0,0,0,46,47,1,0,0,0,
-	47,48,1,0,0,0,48,49,5,43,0,0,49,3,1,0,0,0,50,51,5,3,0,0,51,56,3,10,5,0,
-	52,56,3,6,3,0,53,56,3,8,4,0,54,56,5,26,0,0,55,50,1,0,0,0,55,52,1,0,0,0,
-	55,53,1,0,0,0,55,54,1,0,0,0,56,5,1,0,0,0,57,59,5,27,0,0,58,60,3,32,16,0,
-	59,58,1,0,0,0,59,60,1,0,0,0,60,7,1,0,0,0,61,62,5,2,0,0,62,9,1,0,0,0,63,
-	67,3,12,6,0,64,67,3,14,7,0,65,67,3,16,8,0,66,63,1,0,0,0,66,64,1,0,0,0,66,
-	65,1,0,0,0,67,11,1,0,0,0,68,71,3,18,9,0,69,71,3,20,10,0,70,68,1,0,0,0,70,
-	69,1,0,0,0,71,72,1,0,0,0,72,73,5,46,0,0,73,74,3,24,12,0,74,13,1,0,0,0,75,
-	76,3,24,12,0,76,15,1,0,0,0,77,78,1,0,0,0,78,17,1,0,0,0,79,80,5,28,0,0,80,
-	19,1,0,0,0,81,82,5,29,0,0,82,21,1,0,0,0,83,84,7,0,0,0,84,23,1,0,0,0,85,
-	88,5,28,0,0,86,88,3,26,13,0,87,85,1,0,0,0,87,86,1,0,0,0,88,25,1,0,0,0,89,
-	91,5,42,0,0,90,92,3,28,14,0,91,90,1,0,0,0,91,92,1,0,0,0,92,121,1,0,0,0,
-	93,95,5,49,0,0,94,93,1,0,0,0,94,95,1,0,0,0,95,96,1,0,0,0,96,98,5,44,0,0,
-	97,99,3,28,14,0,98,97,1,0,0,0,98,99,1,0,0,0,99,121,1,0,0,0,100,101,5,42,
-	0,0,101,102,3,22,11,0,102,103,5,44,0,0,103,121,1,0,0,0,104,105,5,42,0,0,
-	105,106,3,22,11,0,106,108,5,44,0,0,107,109,3,28,14,0,108,107,1,0,0,0,108,
-	109,1,0,0,0,109,121,1,0,0,0,110,111,5,44,0,0,111,112,3,22,11,0,112,113,
-	5,42,0,0,113,121,1,0,0,0,114,115,5,44,0,0,115,116,3,22,11,0,116,118,5,42,
-	0,0,117,119,3,28,14,0,118,117,1,0,0,0,118,119,1,0,0,0,119,121,1,0,0,0,120,
-	89,1,0,0,0,120,94,1,0,0,0,120,100,1,0,0,0,120,104,1,0,0,0,120,110,1,0,0,
-	0,120,114,1,0,0,0,121,27,1,0,0,0,122,129,5,52,0,0,123,124,3,22,11,0,124,
-	125,5,28,0,0,125,130,1,0,0,0,126,127,5,28,0,0,127,130,3,22,11,0,128,130,
-	5,28,0,0,129,123,1,0,0,0,129,126,1,0,0,0,129,128,1,0,0,0,130,131,1,0,0,
-	0,131,132,5,53,0,0,132,29,1,0,0,0,133,134,5,42,0,0,134,135,5,51,0,0,135,
-	31,1,0,0,0,136,138,3,22,11,0,137,136,1,0,0,0,137,138,1,0,0,0,138,139,1,
-	0,0,0,139,140,5,44,0,0,140,33,1,0,0,0,16,37,43,46,55,59,66,70,87,91,94,
-	98,108,118,120,129,137];
+	1,1,2,1,2,1,2,1,2,1,2,3,2,56,8,2,1,3,1,3,3,3,60,8,3,1,4,1,4,1,4,3,4,65,
+	8,4,1,5,1,5,3,5,69,8,5,1,5,1,5,1,5,1,6,1,6,1,7,1,7,1,8,1,8,1,9,1,9,1,10,
+	1,10,1,11,1,11,3,11,86,8,11,1,12,1,12,3,12,90,8,12,1,12,3,12,93,8,12,1,
+	12,1,12,3,12,97,8,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,3,12,107,8,
+	12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,3,12,117,8,12,3,12,119,8,12,
+	1,13,1,13,1,13,1,13,1,13,1,13,1,13,3,13,128,8,13,1,13,1,13,1,14,1,14,1,
+	14,1,15,3,15,136,8,15,1,15,1,15,1,16,1,16,3,16,142,8,16,1,16,1,16,1,16,
+	3,16,147,8,16,5,16,149,8,16,10,16,12,16,152,9,16,1,16,0,0,17,0,2,4,6,8,
+	10,12,14,16,18,20,22,24,26,28,30,32,0,1,1,0,49,50,163,0,37,1,0,0,0,2,43,
+	1,0,0,0,4,55,1,0,0,0,6,57,1,0,0,0,8,64,1,0,0,0,10,68,1,0,0,0,12,73,1,0,
+	0,0,14,75,1,0,0,0,16,77,1,0,0,0,18,79,1,0,0,0,20,81,1,0,0,0,22,85,1,0,0,
+	0,24,118,1,0,0,0,26,120,1,0,0,0,28,131,1,0,0,0,30,135,1,0,0,0,32,141,1,
+	0,0,0,34,36,3,2,1,0,35,34,1,0,0,0,36,39,1,0,0,0,37,35,1,0,0,0,37,38,1,0,
+	0,0,38,40,1,0,0,0,39,37,1,0,0,0,40,41,5,0,0,1,41,1,1,0,0,0,42,44,3,28,14,
+	0,43,42,1,0,0,0,43,44,1,0,0,0,44,46,1,0,0,0,45,47,3,4,2,0,46,45,1,0,0,0,
+	46,47,1,0,0,0,47,48,1,0,0,0,48,49,5,43,0,0,49,3,1,0,0,0,50,51,5,3,0,0,51,
+	56,3,8,4,0,52,56,3,6,3,0,53,56,3,32,16,0,54,56,5,26,0,0,55,50,1,0,0,0,55,
+	52,1,0,0,0,55,53,1,0,0,0,55,54,1,0,0,0,56,5,1,0,0,0,57,59,5,27,0,0,58,60,
+	3,30,15,0,59,58,1,0,0,0,59,60,1,0,0,0,60,7,1,0,0,0,61,65,3,10,5,0,62,65,
+	3,12,6,0,63,65,3,14,7,0,64,61,1,0,0,0,64,62,1,0,0,0,64,63,1,0,0,0,65,9,
+	1,0,0,0,66,69,3,16,8,0,67,69,3,18,9,0,68,66,1,0,0,0,68,67,1,0,0,0,69,70,
+	1,0,0,0,70,71,5,46,0,0,71,72,3,22,11,0,72,11,1,0,0,0,73,74,3,22,11,0,74,
+	13,1,0,0,0,75,76,1,0,0,0,76,15,1,0,0,0,77,78,5,28,0,0,78,17,1,0,0,0,79,
+	80,5,29,0,0,80,19,1,0,0,0,81,82,7,0,0,0,82,21,1,0,0,0,83,86,5,28,0,0,84,
+	86,3,24,12,0,85,83,1,0,0,0,85,84,1,0,0,0,86,23,1,0,0,0,87,89,5,42,0,0,88,
+	90,3,26,13,0,89,88,1,0,0,0,89,90,1,0,0,0,90,119,1,0,0,0,91,93,5,49,0,0,
+	92,91,1,0,0,0,92,93,1,0,0,0,93,94,1,0,0,0,94,96,5,44,0,0,95,97,3,26,13,
+	0,96,95,1,0,0,0,96,97,1,0,0,0,97,119,1,0,0,0,98,99,5,42,0,0,99,100,3,20,
+	10,0,100,101,5,44,0,0,101,119,1,0,0,0,102,103,5,42,0,0,103,104,3,20,10,
+	0,104,106,5,44,0,0,105,107,3,26,13,0,106,105,1,0,0,0,106,107,1,0,0,0,107,
+	119,1,0,0,0,108,109,5,44,0,0,109,110,3,20,10,0,110,111,5,42,0,0,111,119,
+	1,0,0,0,112,113,5,44,0,0,113,114,3,20,10,0,114,116,5,42,0,0,115,117,3,26,
+	13,0,116,115,1,0,0,0,116,117,1,0,0,0,117,119,1,0,0,0,118,87,1,0,0,0,118,
+	92,1,0,0,0,118,98,1,0,0,0,118,102,1,0,0,0,118,108,1,0,0,0,118,112,1,0,0,
+	0,119,25,1,0,0,0,120,127,5,53,0,0,121,122,3,20,10,0,122,123,5,28,0,0,123,
+	128,1,0,0,0,124,125,5,28,0,0,125,128,3,20,10,0,126,128,5,28,0,0,127,121,
+	1,0,0,0,127,124,1,0,0,0,127,126,1,0,0,0,128,129,1,0,0,0,129,130,5,54,0,
+	0,130,27,1,0,0,0,131,132,5,42,0,0,132,133,5,51,0,0,133,29,1,0,0,0,134,136,
+	3,20,10,0,135,134,1,0,0,0,135,136,1,0,0,0,136,137,1,0,0,0,137,138,5,44,
+	0,0,138,31,1,0,0,0,139,142,3,30,15,0,140,142,5,2,0,0,141,139,1,0,0,0,141,
+	140,1,0,0,0,142,150,1,0,0,0,143,146,5,52,0,0,144,147,3,30,15,0,145,147,
+	5,2,0,0,146,144,1,0,0,0,146,145,1,0,0,0,147,149,1,0,0,0,148,143,1,0,0,0,
+	149,152,1,0,0,0,150,148,1,0,0,0,150,151,1,0,0,0,151,33,1,0,0,0,152,150,
+	1,0,0,0,19,37,43,46,55,59,64,68,85,89,92,96,106,116,118,127,135,141,146,
+	150];
 
 	private static __ATN: ATN;
 	public static get _ATN(): ATN {
@@ -1024,8 +1083,8 @@ export class InstrContext extends ParserRuleContext {
 	public var_(): VarContext {
 		return this.getTypedRuleContext(VarContext, 0) as VarContext;
 	}
-	public str(): StrContext {
-		return this.getTypedRuleContext(StrContext, 0) as StrContext;
+	public arr(): ArrContext {
+		return this.getTypedRuleContext(ArrContext, 0) as ArrContext;
 	}
 	public EINDPR(): TerminalNode {
 		return this.getToken(drama.EINDPR, 0);
@@ -1062,28 +1121,6 @@ export class VarContext extends ParserRuleContext {
 	public accept<Result>(visitor: dramaVisitor<Result>): Result {
 		if (visitor.visitVar) {
 			return visitor.visitVar(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-
-
-export class StrContext extends ParserRuleContext {
-	constructor(parser?: drama, parent?: ParserRuleContext, invokingState?: number) {
-		super(parent, invokingState);
-    	this.parser = parser;
-	}
-	public STR(): TerminalNode {
-		return this.getToken(drama.STR, 0);
-	}
-    public get ruleIndex(): number {
-    	return drama.RULE_str;
-	}
-	// @Override
-	public accept<Result>(visitor: dramaVisitor<Result>): Result {
-		if (visitor.visitStr) {
-			return visitor.visitStr(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
@@ -1393,6 +1430,43 @@ export class NumberContext extends ParserRuleContext {
 	public accept<Result>(visitor: dramaVisitor<Result>): Result {
 		if (visitor.visitNumber) {
 			return visitor.visitNumber(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+
+
+export class ArrContext extends ParserRuleContext {
+	constructor(parser?: drama, parent?: ParserRuleContext, invokingState?: number) {
+		super(parent, invokingState);
+    	this.parser = parser;
+	}
+	public number__list(): NumberContext[] {
+		return this.getTypedRuleContexts(NumberContext) as NumberContext[];
+	}
+	public number_(i: number): NumberContext {
+		return this.getTypedRuleContext(NumberContext, i) as NumberContext;
+	}
+	public STR_list(): TerminalNode[] {
+	    	return this.getTokens(drama.STR);
+	}
+	public STR(i: number): TerminalNode {
+		return this.getToken(drama.STR, i);
+	}
+	public SEMI_COLON_list(): TerminalNode[] {
+	    	return this.getTokens(drama.SEMI_COLON);
+	}
+	public SEMI_COLON(i: number): TerminalNode {
+		return this.getToken(drama.SEMI_COLON, i);
+	}
+    public get ruleIndex(): number {
+    	return drama.RULE_arr;
+	}
+	// @Override
+	public accept<Result>(visitor: dramaVisitor<Result>): Result {
+		if (visitor.visitArr) {
+			return visitor.visitArr(this);
 		} else {
 			return visitor.visitChildren(this);
 		}

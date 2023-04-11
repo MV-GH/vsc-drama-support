@@ -168,7 +168,7 @@ class FormatCodeVisitor extends DramaVisitor<string> {
 }
 
 function pleaseThyComment(comment: string): string {
-    if (comment[0] === "|" && comment[1].trim() !== "") { // verifies that the first character is a pipeline and the next character is not whitespace
+    if (comment[0] === "|" && comment.length > 1 && comment[1].trim() !== "") { // verifies that the first character is a pipeline and the next character is not whitespace
         return "| " + comment.slice(1)
     }
 

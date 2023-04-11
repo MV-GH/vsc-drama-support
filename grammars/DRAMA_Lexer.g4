@@ -4,17 +4,13 @@ options {
 	caseInsensitive = true;
 }
 
-@lexer::header  {
-//@ts-nocheck
-}
-
 // deliberary chosen to not include EOL, comment cant consume EOL as it is needed to match lines
 COMMENT: PIPELINE (~[\r\n])* -> channel(HIDDEN);
 
 STR: '"' ~["\r\n]* '"';
 
 INSTR_MODE: INSTR MODE?; // Forced to do this approach as else it would match ID instead
-MODE: WS? DOT WS? (~[ \t\f\r\n])+; // Verify mode later, TODO: MODE does not actually allow whitespace
+MODE: WS? DOT WS? (~[ \t\f\r\n])+; // MODE does not actually allow whitespace, -> but formatter fixes that
 
 WS: [ \t\f]+ -> skip;
 
@@ -98,23 +94,22 @@ KLG: 'KLG';
 KL: 'KL';
 GRG: 'GRG';
 
-ID: (A | UNDERSCORE) (W | DOT)*;
-// cant start with numbers or dots but they can be in the body
+ID: (A | UNDERSCORE) (W | DOT)*; // cant start with numbers or dots but they can be in the body
+
 EOL: '\r'? '\n';
 INT: D+;
+
 DOT: '.';
 COMMA: ',';
 PIPELINE: '|';
 UNDERSCORE: '_';
-
 MINUS: '-';
 PLUS: '+';
 COLON: ':';
+SEMI_COLON: ';';
 LP: '(';
 RP: ')';
 
-OTHER: .+?;
-// GARBAGE collecting token, not sure about this approach, to be seen
 
 // REGEX CLASS RULES
 fragment W: (A | D | UNDERSCORE);

@@ -69,11 +69,11 @@ class LongestSecondArgVisitor extends BaseLongestVisitor {
     }
 }
 
-class LongestStringVisitor extends BaseLongestVisitor {
+class LongestArrayVisitor extends BaseLongestVisitor {
     visitStart: (ctx: StartContext) => number = (ctx) => {
 
         const fArgs = ctx.line_list()
-            .map(line => line.instr()?.str())
+            .map(line => line.instr()?.arr())
             .filter(arg => arg !== null && arg !== undefined)
 
         if (fArgs.length === 0)
@@ -97,10 +97,10 @@ class LongestVarVisitor extends BaseLongestVisitor {
         if (fArgs.length === 0)
             return 0;
 
-        const longestARg = fArgs.reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
+        const longestArg = fArgs.reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
 
 
-        return longestARg.accept(this);
+        return longestArg.accept(this);
     }
 }
 
@@ -110,7 +110,7 @@ export default class CodeStats {
     firstArgLength: number;
     secondArgLength: number;
     varLength: number;
-    stringLength: number;
+    arrayLength: number;
     totalMaxLineLength: number; // potential to break on single arg instructions, which could be longer, possibly not anymore, just check single arg instructs only
 
     constructor(parseTree: StartContext) {
@@ -118,8 +118,8 @@ export default class CodeStats {
         this.firstArgLength = parseTree.accept(new LongestFirstArgVisitor());
         this.secondArgLength = parseTree.accept(new LongestSecondArgVisitor());
         this.varLength = parseTree.accept(new LongestVarVisitor());
-        this.stringLength = parseTree.accept(new LongestStringVisitor());
+        this.arrayLength = parseTree.accept(new LongestArrayVisitor());
         this.totalMaxLineLength = this.labelLength + INSTR_SPACING;
-        this.totalMaxLineLength += Math.max(this.stringLength, this.varLength, this.firstArgLength + 2 + this.secondArgLength);
+        this.totalMaxLineLength += Math.max(this.arrayLength, this.varLength, this.firstArgLength + 2 + this.secondArgLength);
     }
 }
