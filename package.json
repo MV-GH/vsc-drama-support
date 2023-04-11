@@ -89,6 +89,16 @@
           "default":"Right",
           "description": "Pads labels to the left/center/right."
         },
+        "drama.alignment.comment": {
+          "type": "string",
+          "enum": [
+            "Start",
+            "Instruction",
+            "End"
+          ],
+          "default":"Instruction",
+          "description": "Pads comment only lines, to start either at the Start of a line; at Instruction position or at End of line."
+        },
         "drama.multipleLabelLayer": {
           "type": "boolean",
           "default": false,

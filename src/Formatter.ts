@@ -20,7 +20,7 @@ class FormatCodeVisitor extends DramaVisitor<string> {
     constructor(parseTree: StartContext, tokenStream: CommonTokenStream, config: vscode.WorkspaceConfiguration) {
         super();
         modifyParseTree(tokenStream, config)
-        this.alignConfig = config.get("alignment") || { label: AlignOptions.Left };
+        this.alignConfig = config.get("alignment") || { label: AlignOptions.Left, comment: CommentOptions.Instruction };
         this.tokenStream = tokenStream;
         this.codeStats = new CodeStats(parseTree);
     }
@@ -48,7 +48,7 @@ class FormatCodeVisitor extends DramaVisitor<string> {
     }
 
     visitLabel: (ctx: LabelContext) => string = (ctx) => {
-        let id = ctx.ID().symbol.text + ": ";
+        const id = ctx.ID().symbol.text + ": ";
 
         if (this.alignConfig.label === AlignOptions.Center) {
             return id.padStart((id.length + this.codeStats.labelLength) / 2).padEnd(this.codeStats.labelLength)
@@ -125,7 +125,7 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         return this.visit(ctx.RESGR()) + post;
     }
 
-    myGetText(node: TerminalNode & ParserRuleContext, last: boolean = false): string {
+    myGetText(node: TerminalNode & ParserRuleContext): string {
         if (node.getChildCount() == 0) {
             const t = node.symbol;
             // @ts-ignore: ANTLR4 FIX YOUR TS TARGET
@@ -137,7 +137,7 @@ class FormatCodeVisitor extends DramaVisitor<string> {
 
                 for (const token of tokensBefore) {
                     before += token.type === DramaLexer.COMMENT ?
-                        " ".repeat(this.currentLinePos !== 0 ? 1 + this.codeStats.totalMaxLineLength - this.currentLinePos : 0)
+                        " ".repeat(this.currentLinePos !== 0 ? 1 + this.codeStats.totalMaxLineLength - this.currentLinePos : this.getCommentSpacing())
                         + pleaseThyComment(token.text) :
                         token.text;
                 }
@@ -152,6 +152,19 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         }
         return node.children?.map((node1: any) => this.myGetText(node1)).join() ?? "";
     }
+
+    getCommentSpacing(){
+        switch (this.alignConfig.comment) {
+            case CommentOptions.Start:
+               return 0;
+            case CommentOptions.Instruction:
+                return this.codeStats.labelLength;
+            case CommentOptions.End:
+                return 1 + this.codeStats.totalMaxLineLength - this.currentLinePos;
+            default:
+               return 0;
+        }
+    }
 }
 
 function pleaseThyComment(comment: string): string {
@@ -161,8 +174,6 @@ function pleaseThyComment(comment: string): string {
 
     return comment
 }
-
-const l = ErrorNode
 
 
 
@@ -194,10 +205,17 @@ export function formatInput(inputStream: CharStream, config: vscode.WorkspaceCon
     return newCode;
 }
 
-interface Alignment { label: AlignOptions }
+interface Alignment { label: AlignOptions, comment: CommentOptions }
 
 enum AlignOptions {
     Left = "Left",
     Center = "Center",
     Right = "Right",
+}
+
+
+enum CommentOptions {
+    Start = "Start",
+    Instruction = "Instruction",
+    End = "End",
 }
