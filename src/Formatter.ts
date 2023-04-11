@@ -6,7 +6,7 @@ import CodeStats from './CodeStats';
 
 import modifyParseTree from './ParseTreeModifier';
 import * as vscode from 'vscode';
-import { FIRST_ARG_SPACES } from './Constants';
+import { INSTR_SPACING } from './Constants';
 
 
 
@@ -15,11 +15,12 @@ class FormatCodeVisitor extends DramaVisitor<string> {
     tokenStream: CommonTokenStream;
     currentLinePos = 0;
     codeStats: CodeStats;
-
+    alignConfig: Alignment;
 
     constructor(parseTree: StartContext, tokenStream: CommonTokenStream, config: vscode.WorkspaceConfiguration) {
         super();
         modifyParseTree(tokenStream, config)
+        this.alignConfig = config.get("alignment") || { label: AlignOptions.Left };
         this.tokenStream = tokenStream;
         this.codeStats = new CodeStats(parseTree);
     }
@@ -47,7 +48,15 @@ class FormatCodeVisitor extends DramaVisitor<string> {
     }
 
     visitLabel: (ctx: LabelContext) => string = (ctx) => {
-        return ctx.ID().symbol.text.padStart(this.codeStats.labelLength) + ": "
+        let id = ctx.ID().symbol.text + ": ";
+
+        if (this.alignConfig.label === AlignOptions.Center) {
+            return id.padStart((id.length + this.codeStats.labelLength) / 2).padEnd(this.codeStats.labelLength)
+        } else if (this.alignConfig.label === AlignOptions.Right) {
+            return id.padStart(this.codeStats.labelLength);
+        } else {
+            return id.padEnd(this.codeStats.labelLength);
+        }
     }
     visitLine: (ctx: LineContext) => string = (ctx) => {
         // if (hasErrorNode(ctx as ParserRuleContext)) { // Exit early if this node contains error nodes, return original text
@@ -59,7 +68,7 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         if (ctx.label()) {
             newLine += this.visit(ctx.label())
         } else if (ctx.instr()) {
-            newLine = " ".repeat(this.codeStats.labelLength === 0 ? 0 : this.codeStats.labelLength + 2)
+            newLine = " ".repeat(this.codeStats.labelLength)
         }
 
         if (ctx.instr()) {
@@ -80,7 +89,7 @@ class FormatCodeVisitor extends DramaVisitor<string> {
             instrLen = instrC.INSTR_MODE().symbol.text.length
         }
 
-        let line = " ".repeat(FIRST_ARG_SPACES - instrLen) // distance between opcode and first arg
+        let line = " ".repeat(INSTR_SPACING - instrLen) // distance between opcode and first arg
 
         // should always be like 3: arg1 "," arg2
         const firstArg = this.visit(ctx.getChild(0)) + ",";
@@ -98,7 +107,7 @@ class FormatCodeVisitor extends DramaVisitor<string> {
             instrLen = instrC.INSTR_MODE().symbol.text.length
         }
 
-        let line = " ".repeat(FIRST_ARG_SPACES - instrLen)
+        let line = " ".repeat(INSTR_SPACING - instrLen)
 
 
         return line + this.visit(ctx.anr())
@@ -177,7 +186,7 @@ export function formatInput(inputStream: CharStream, config: vscode.WorkspaceCon
     const lexer = new DramaLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
     const parser = new DramaParser(tokenStream);
-    parser.removeErrorListeners()
+    //parser.removeErrorListeners()
     const parseTree = parser.start();
     const visitor = new FormatCodeVisitor(parseTree, tokenStream, config);
 
@@ -185,3 +194,10 @@ export function formatInput(inputStream: CharStream, config: vscode.WorkspaceCon
     return newCode;
 }
 
+interface Alignment { label: AlignOptions }
+
+enum AlignOptions {
+    Left = "Left",
+    Center = "Center",
+    Right = "Right",
+}

@@ -79,6 +79,16 @@
           "default": "To lower",
           "description": "(Un)capitalizes or do no change all the labels."
         },
+        "drama.alignment.label": {
+          "type": "string",
+          "enum": [
+            "Left",
+            "Center",
+            "Right"
+          ],
+          "default":"Right",
+          "description": "Pads labels to the left/center/right."
+        },
         "drama.multipleLabelLayer": {
           "type": "boolean",
           "default": false,

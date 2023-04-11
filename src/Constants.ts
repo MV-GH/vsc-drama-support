@@ -1,1 +1,1 @@
-export const FIRST_ARG_SPACES = 7;
+export const INSTR_SPACING = 7;

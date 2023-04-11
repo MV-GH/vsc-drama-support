@@ -83,13 +83,13 @@ clean up grammar
 ADD missing support for ARRAY declaration using <LABEL:>  VALUE; VALUE; VALUE
 
 formatter todos:
-- formatting bs s+t
-- options: left leaning label, move comments at instruction level
+- formatting bs s+t possible leave as is
+- options: move comments at instruction level
 - dont touch bad lines
 
 
 # CONFIG formatter
 - (un)capitalize labels / dont change
 - also for keywords
+- alignment label
 - multiple layer labels
-- space between arg and instruct
