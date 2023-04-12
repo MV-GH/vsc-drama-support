@@ -30,7 +30,7 @@ class LongestLabelVisitor extends BaseLongestVisitor {
 
         const longestLabel: LabelContext = labels.reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
 
-        return longestLabel.accept(this) + 2;
+        return longestLabel.accept(this) + 1;
     }
 }
 
@@ -119,7 +119,7 @@ export default class CodeStats {
         this.secondArgLength = parseTree.accept(new LongestSecondArgVisitor());
         this.varLength = parseTree.accept(new LongestVarVisitor());
         this.arrayLength = parseTree.accept(new LongestArrayVisitor());
-        this.totalMaxLineLength = this.labelLength + INSTR_SPACING;
-        this.totalMaxLineLength += Math.max(this.arrayLength, this.varLength, this.firstArgLength + 2 + this.secondArgLength);
+        this.totalMaxLineLength = this.labelLength;
+        this.totalMaxLineLength += Math.max(this.arrayLength, this.varLength, INSTR_SPACING + this.firstArgLength + 2 + this.secondArgLength);
     }
 }
