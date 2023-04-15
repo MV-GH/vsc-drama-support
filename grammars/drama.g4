@@ -26,13 +26,14 @@ sign: PLUS | MINUS;
 
 anr: (REGISTER | adr);
 
+
 adr: (
 		ID index?
-		| MINUS? INT index?
-		| ID sign INT
+		| number index?
+		| number sign INT
 		| ID sign INT index?
-		| INT sign ID
-		| INT sign ID index?
+		| number sign ID
+		| number sign ID index?
 	);
 
 index: LP ( (sign REGISTER) | (REGISTER sign) | (REGISTER)) RP;

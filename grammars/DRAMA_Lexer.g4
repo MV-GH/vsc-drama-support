@@ -10,7 +10,7 @@ COMMENT: PIPELINE (~[\r\n])* -> channel(HIDDEN);
 STR: '"' ~["\r\n]* '"';
 
 INSTR_MODE: INSTR MODE?; // Forced to do this approach as else it would match ID instead
-MODE: WS? DOT WS? (~[ \t\f\r\n])+; // MODE does not actually allow whitespace, -> but formatter fixes that
+MODE: WS? DOT WS? A; // MODE does not actually allow whitespace, -> but formatter fixes that
 
 WS: [ \t\f]+ -> skip;
 
