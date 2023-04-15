@@ -75,12 +75,10 @@ In regards from valid syntax, in my attempt to formalise the spec of DRAMA
 
 
 # TODOS
-- UPdate syntax highlighting to add s+1 garbage
+- UPdate syntax highlighting to add s+1 garbagee and arr
 - optional Program line only line support, only actual instructions count as line
 
-todo
-clean up grammar
-ADD missing support for ARRAY declaration using <LABEL:>  VALUE; VALUE; VALUE
+
 
 formatter todos:
 - formatting bs s+t possible leave as is
@@ -92,3 +90,8 @@ formatter todos:
 - also for keywords
 - alignment label & comment
 - multiple layer labels
+
+
+## GRAMMAR CHOICES
+ALLOW + as prefix for number
+dont check actual arguments

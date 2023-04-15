@@ -13,6 +13,7 @@ import {
 	Interval, IntervalSet
 } from 'antlr4';
 import dramaVisitor from "./dramaVisitor.js";
+import { SkipLineError } from '../Constants.ts';
 
 // for running tests with parameters, TODO: discuss strategy for typed parameters in CI
 // eslint-disable-next-line no-unused-vars
@@ -176,22 +177,22 @@ export default class drama extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 37;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & 201326604) !== 0) || ((((_la - 42)) & ~0x1F) === 0 && ((1 << (_la - 42)) & 391) !== 0)) {
-				{
-				{
-				this.state = 34;
-				this.line();
-				}
-				}
-				this.state = 39;
+				this.state = 37;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			}
-			this.state = 40;
-			this.match(drama.EOF);
+				while (_la !== drama.EOF) {
+					{
+						{
+							this.state = 34;
+							this.line();
+						}
+					}
+					this.state = 39;
+					this._errHandler.sync(this);
+					_la = this._input.LA(1);
+				}
+				this.state = 40;
+				this.match(drama.EOF);
 			}
 		}
 		catch (re) {
@@ -247,6 +248,8 @@ export default class drama extends Parser {
 				localctx.exception = re;
 				this._errHandler.reportError(this, re);
 				this._errHandler.recover(this, re);
+			} else if (re instanceof SkipLineError) {
+				this._errHandler.reportError(this, re);
 			} else {
 				throw re;
 			}

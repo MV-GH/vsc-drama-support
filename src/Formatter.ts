@@ -1,4 +1,4 @@
-import { CommonTokenStream, ParserRuleContext, TerminalNode, ErrorNode, Interval, CharStream } from 'antlr4';
+import { CommonTokenStream, ParserRuleContext, TerminalNode, ErrorNode, Interval, CharStream, ErrorStrategy } from 'antlr4';
 import DramaLexer from './antlr/DRAMA_Lexer';
 import DramaParser, { InstrContext, LineContext, No_argContext, Single_argContext, VarContext, StartContext, LabelContext, Double_argContext } from './antlr/drama';
 import DramaVisitor from './antlr/dramaVisitor';
@@ -7,6 +7,7 @@ import CodeStats from './CodeStats';
 import modifyParseTree from './ParseTreeModifier';
 import * as vscode from 'vscode';
 import { INSTR_SPACING } from './Constants';
+import LineErrorStrategy from './CustomErrorStrategy';
 
 
 
@@ -59,11 +60,6 @@ class FormatCodeVisitor extends DramaVisitor<string> {
         }
     }
     visitLine: (ctx: LineContext) => string = (ctx) => {
-        // if (hasErrorNode(ctx as ParserRuleContext)) { // Exit early if this node contains error nodes, return original text
-        //     return this.tokenStream.getText(new Interval(ctx.start.start, ctx.stop!.stop))
-        // }
-
-
         let newLine = "";
         if (ctx.label()) {
             newLine += this.visit(ctx.label())
@@ -176,28 +172,14 @@ function pleaseThyComment(comment: string): string {
 }
 
 
-
-function hasErrorNode(node: ParserRuleContext & { isErrorNode?: () => boolean }) {
-    if (node.isErrorNode && node.isErrorNode()) {
-        return true
-    } else if (node.children == undefined) {
-        return false
-    }
-
-    for (const [_, child] of Object.entries(node.children)) {
-        if (hasErrorNode(child as ParserRuleContext & { isErrorNode?: () => boolean })) {
-            return true
-        }
-    }
-    return false
-}
-
 export function formatInput(inputStream: CharStream, config: vscode.WorkspaceConfiguration) {
 
     const lexer = new DramaLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
     const parser = new DramaParser(tokenStream);
-    //parser.removeErrorListeners()
+    parser._errHandler = new LineErrorStrategy();
+    parser.removeErrorListeners() // TODO
+    
     const parseTree = parser.start();
     const visitor = new FormatCodeVisitor(parseTree, tokenStream, config);
 
