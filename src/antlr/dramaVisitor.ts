@@ -3,23 +3,23 @@
 import {ParseTreeVisitor} from 'antlr4';
 
 
-import { StartContext } from "./drama";
-import { LineContext } from "./drama";
-import { InstrContext } from "./drama";
-import { VarContext } from "./drama";
-import { ArgumentsContext } from "./drama";
-import { Double_argContext } from "./drama";
-import { Single_argContext } from "./drama";
-import { No_argContext } from "./drama";
-import { RegContext } from "./drama";
-import { CdContext } from "./drama";
-import { SignContext } from "./drama";
-import { AnrContext } from "./drama";
-import { AdrContext } from "./drama";
-import { IndexContext } from "./drama";
-import { LabelContext } from "./drama";
-import { NumberContext } from "./drama";
-import { ArrContext } from "./drama";
+import type { StartContext } from "./drama";
+import type { LineContext } from "./drama";
+import type { InstrContext } from "./drama";
+import type { VarContext } from "./drama";
+import type { ArgumentsContext } from "./drama";
+import type { Double_argContext } from "./drama";
+import type { Single_argContext } from "./drama";
+import type { No_argContext } from "./drama";
+import type { RegContext } from "./drama";
+import type { CdContext } from "./drama";
+import type { SignContext } from "./drama";
+import type { AnrContext } from "./drama";
+import type { AdrContext } from "./drama";
+import type { IndexContext } from "./drama";
+import type { LabelContext } from "./drama";
+import type { NumberContext } from "./drama";
+import type { ArrContext } from "./drama";
 
 
 /**
