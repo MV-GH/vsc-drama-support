@@ -51,6 +51,24 @@ class LongestFirstArgVisitor extends BaseLongestVisitor {
     }
 }
 
+
+class LongestSingleArgVisitor extends BaseLongestVisitor {
+    visitStart: (ctx: StartContext) => number = (ctx) => {
+
+        const fArgs = ctx.line_list()
+            .map(line => line.instr()?.arguments()?.single_arg())
+            .filter(arg => arg !== null && arg !== undefined)
+            .map(x => x.getChild(0) as AnrContext);
+
+        if (fArgs.length === 0)
+            return 0;
+
+        const longestARg = fArgs.reduce((a, b) => a.accept(this) > b.accept(this) ? a : b);
+
+        return longestARg.accept(this);
+    }
+}
+
 class LongestSecondArgVisitor extends BaseLongestVisitor {
     visitStart: (ctx: StartContext) => number = (ctx) => {
 
@@ -112,6 +130,7 @@ export default class CodeStats {
     varLength: number;
     arrayLength: number;
     totalMaxLineLength: number; // potential to break on single arg instructions, which could be longer, possibly not anymore, just check single arg instructs only
+    singleArgLength: number;
 
     constructor(parseTree: StartContext) {
         this.labelLength = parseTree.accept(new LongestLabelVisitor());
@@ -119,7 +138,8 @@ export default class CodeStats {
         this.secondArgLength = parseTree.accept(new LongestSecondArgVisitor());
         this.varLength = parseTree.accept(new LongestVarVisitor());
         this.arrayLength = parseTree.accept(new LongestArrayVisitor());
+        this.singleArgLength = parseTree.accept(new LongestSingleArgVisitor());
         this.totalMaxLineLength = this.labelLength;
-        this.totalMaxLineLength += Math.max(this.arrayLength, this.varLength, INSTR_SPACING + this.firstArgLength + 2 + this.secondArgLength);
+        this.totalMaxLineLength += Math.max(this.arrayLength, this.varLength, INSTR_SPACING + this.singleArgLength, INSTR_SPACING + this.firstArgLength + 2 + this.secondArgLength);
     }
 }
