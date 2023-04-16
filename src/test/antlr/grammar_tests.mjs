@@ -3,7 +3,7 @@ import { exec } from 'child_process'
 const exec_promise = promisify(exec);
 import { readdir } from 'fs';
 
-const rootTests = "./testfiles/"
+const rootTests = "./testfiles/grammars/"
 const validTests = rootTests + "valid/"
 const invalidTests = rootTests + "invalid/";//These tests should fail to parse
 

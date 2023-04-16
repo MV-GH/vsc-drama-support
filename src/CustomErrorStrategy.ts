@@ -48,7 +48,7 @@ function getStartContext(ctx: ParserRuleContext) {
 
 function addErrorToken(recognizer: Parser) {
     const lexer = (recognizer.getTokenStream() as any).tokenSource
-    const source = lexer._tokenFactorySourcePair; // TODO if first line, start 0
+    const source = lexer._tokenFactorySourcePair;
     const s = getStartContext(recognizer._ctx);
     const l = (s.children?.at(-1) as unknown as LineContext || TerminalNode || null);
 

@@ -178,7 +178,7 @@ export function formatInput(inputStream: CharStream, config: vscode.WorkspaceCon
     const tokenStream = new CommonTokenStream(lexer);
     const parser = new DramaParser(tokenStream);
     parser._errHandler = new LineErrorStrategy();
-    parser.removeErrorListeners() // TODO
+    parser.removeErrorListeners()
     
     const parseTree = parser.start();
     const visitor = new FormatCodeVisitor(parseTree, tokenStream, config);
