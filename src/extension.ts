@@ -10,16 +10,16 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 	//Write to output.
-	vscode.window.showInformationMessage(
-		"Active you are"
-	);
+	// vscode.window.showInformationMessage(
+	// 	"Active you are"
+	// );
 
 	const disposable = vscode.languages.registerDocumentFormattingEditProvider({ "language": 'drama' }, {
 		provideDocumentFormattingEdits(document) {
 
-			vscode.window.showInformationMessage(
-				"format you shall"
-			);
+			// vscode.window.showInformationMessage(
+			// 	"format you shall"
+			// );
 
 			const config = vscode.workspace.getConfiguration("drama")
 			try {
