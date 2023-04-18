@@ -2,7 +2,7 @@
   "name": "vsc-drama-support",
   "displayName": "DRAMA support",
   "description": "Adds syntax highlighting",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.76.0"
   },
