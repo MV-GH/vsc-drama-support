@@ -13,3 +13,4 @@ webpack.config.js
 **/*.map
 **/*.ts
 .antlr
+testfiles/**
