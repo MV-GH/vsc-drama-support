@@ -13,7 +13,7 @@
 		},
 		{
 			"comment": "label/symbol",
-			"match": "^\\s*\\w+\\s*:",
+			"match": "\\$?\\w+\\s*:",
 			"name": "constant.other"
 		},
 		{
@@ -71,6 +71,10 @@
 					"comment": "conditions which are discouraged to use",
 					"match": "(?i)\\b(NUL|NNUL|POS|NPOS|NEG|NNEG)\\b",
 					"name": "invalid.deprecated"
+				},{
+					"comment": "macro stuff",
+					"match": "(?i)\\b(MACRO|MCREINDE|MFOUT|MVSP|MSPR|MVGL|MEVA|MNTS)\\b",
+					"name": "keyword.control.drama"
 				}
 			]
 		}

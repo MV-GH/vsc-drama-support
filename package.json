@@ -1,8 +1,8 @@
 {
   "name": "vsc-drama-support",
   "displayName": "DRAMA support",
-  "description": "Adds syntax highlighting",
-  "version": "0.0.3",
+  "description": "Adds support for the DRAMA language, currently adds a formatter & syntax highlighting",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.76.0"
   },

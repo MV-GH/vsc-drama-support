@@ -1,4 +1,10 @@
-# vsc-drama-support
+<div align="center">
+    <img src="media/upscaled_drama.jpg" alt="drama icon" height="150" />
+    <h1>vsc-drama-support</h>
+</div>
+
+
+
 
 This extension adds support for the DRAMA language (Decimale RekenAutomaat met Meerdere Accumulatoren) or (Decimal Calculator with Multiple Accumulators).
 At the moment it only does syntax highlighting and formatting.
@@ -15,21 +21,3 @@ At the moment it only does syntax highlighting and formatting.
 
 ![formatting on view example tests](media/formatting-example.gif)
   
-
----
-## Release Notes
-
-### 0.0.2
-
-- Added formatter with several options
-- Added file icons for .dra files
-- Added default options for .dra files
-
-
-### 0.0.1
-
-- Added Syntax highlighting
-
-### [UNRELEASED]
-- Custom line numbers for actual instructions count
----
